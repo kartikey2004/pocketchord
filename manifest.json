@@ -1,0 +1,15 @@
+{
+  "name": "PocketChord",
+  "short_name": "PocketChord",
+  "description": "Pocket chord synthesizer, arpeggiator & sequencer",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#0f0f0f",
+  "theme_color": "#0f0f0f",
+  "categories": ["music", "entertainment"],
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
