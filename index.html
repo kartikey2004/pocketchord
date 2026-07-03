@@ -48,6 +48,36 @@
     --bad: #b6bcc6;
   }
   html, body { transition: background 0.2s ease, color 0.2s ease; }
+
+  /* Tap-to-start overlay */
+  #startOverlay {
+    position: fixed; inset: 0; z-index: 100;
+    background: radial-gradient(circle at 50% 40%, #1a1a20, #0b0b0d);
+    display: flex; align-items: center; justify-content: center; padding: 24px;
+    text-align: center;
+  }
+  #startOverlay.gone { display: none; }
+  .start-card { max-width: 340px; }
+  .start-dot { width: 18px; height: 18px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 24px var(--glow); margin: 0 auto 18px; animation: pulseDot 1.6s ease-in-out infinite; }
+  @keyframes pulseDot { 50% { transform: scale(1.25); opacity: 0.6; } }
+  .start-title { font-size: 30px; font-weight: 700; letter-spacing: 0.5px; color: #f0f0f4; }
+  .start-sub { font-size: 14px; color: #9a9aa6; margin: 10px 0 26px; line-height: 1.5; }
+  .start-btn {
+    background: var(--accent); color: #04121f; border: none; border-radius: 14px;
+    padding: 16px 34px; font-family: inherit; font-size: 18px; font-weight: 700; cursor: pointer;
+    box-shadow: 0 0 26px var(--glow); -webkit-tap-highlight-color: transparent;
+  }
+  .start-btn:active { transform: scale(0.97); }
+  .start-loading { font-size: 12px; color: #7a7a86; margin-top: 16px; min-height: 16px; }
+
+  #toast {
+    position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%) translateY(20px);
+    z-index: 90; background: var(--panel-2); color: var(--text); border: 1px solid var(--border);
+    border-radius: 999px; padding: 9px 16px; font-size: 13px; font-weight: 600;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4); opacity: 0; pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html, body {
     margin: 0; padding: 0;
@@ -84,7 +114,9 @@
   .col { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
   @media (max-width: 940px) {
     .board { grid-template-columns: 1fr; }
+    .board > .col:nth-child(2) { order: -1; }   /* pads column first on phones */
     .topbar { flex-wrap: wrap; }
+    .kbd { display: none; }                       /* hide viz strip on phones to lift pads up */
   }
   .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 6px; }
@@ -342,6 +374,19 @@
 </style>
 </head>
 <body>
+  <!-- Tap-to-start: unlocks audio (browsers require a gesture) so the first pad always sounds -->
+  <div id="startOverlay">
+    <div class="start-card">
+      <div class="start-dot"></div>
+      <div class="start-title">PocketChord</div>
+      <div class="start-sub">Tap a button to play a chord · hold to sustain</div>
+      <button class="start-btn" id="startBtn">▶ Tap to start</button>
+      <div class="start-loading" id="startLoading"></div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
   <div class="wrap">
   <!-- Top bar: title · display · status · transport-safety -->
   <div class="topbar">
@@ -755,7 +800,7 @@ const state = {
   octaveShift: 0,     // -2..+2
   inversion: 0,       // 0 root, 1 first, 2 second
   voicing: 'close',   // close|open|drop2|drop3|wide|piano|guitar|strings
-  instrument: 'piano',
+  instrument: 'epiano',   // instant synth default (piano streams samples — opt-in)
   strum: false,
   strumDir: 'down',   // down|up|alt|random
   strumSpeed: 18,     // ms between notes
@@ -837,7 +882,9 @@ let fxBuilt = false;
 
 let metroSynth, metroLoop;
 function buildFX() {
-  masterVol = new Tone.Volume(parseFloat(document.getElementById('volume').value)).toDestination();
+  // Master bus: volume -> limiter -> destination, so big chords/arps never clip.
+  const limiter = new Tone.Limiter(-1).toDestination();
+  masterVol = new Tone.Volume(parseFloat(document.getElementById('volume').value)).connect(limiter);
   reverb = new Tone.Reverb({ decay: 3.2, wet: 0 }).connect(masterVol);
   delay  = new Tone.FeedbackDelay({ delayTime: '8n', feedback: 0.35, wet: 0 }).connect(reverb);
   chorus = new Tone.Chorus({ frequency: 1.5, delayTime: 3.5, depth: 0.7, wet: 0 }).connect(delay).start();
@@ -1023,7 +1070,8 @@ function makeSynth(kind) {
         'A7':'A7.mp3','C8':'C8.mp3'
       },
       release: 1.2,
-      baseUrl: 'https://tonejs.github.io/audio/salamander/'
+      baseUrl: 'https://tonejs.github.io/audio/salamander/',
+      onload: () => showToast('🎹 Piano ready')
     });
   }
   if (kind === 'pad') {
@@ -1069,6 +1117,16 @@ function loadInstrument(kind) {
   synth = makeSynth(kind);
   synth.volume.value = 0;
   synth.connect(chorus);
+  if (kind === 'piano' && synth.loaded === false) showToast('🎹 Loading piano samples…', 0);
+}
+
+let _toastTimer = null;
+function showToast(msg, ms = 1600) {
+  const t = document.getElementById('toast');
+  if (!t) return;
+  t.textContent = msg; t.classList.add('show');
+  if (_toastTimer) clearTimeout(_toastTimer);
+  if (ms > 0) _toastTimer = setTimeout(() => t.classList.remove('show'), ms);
 }
 
 /* ============================================================
@@ -2199,6 +2257,21 @@ async function ensureAudio() {
 }
 document.getElementById('enableAudio').onclick = ensureAudio;
 
+// Tap-to-start overlay: unlock audio + load the (instant) default synth, THEN reveal the app.
+(function () {
+  const ov = document.getElementById('startOverlay');
+  const loading = document.getElementById('startLoading');
+  let starting = false;
+  async function start() {
+    if (starting) return; starting = true;
+    loading.textContent = 'starting…';
+    try { await ensureAudio(); } catch (_) {}
+    ov.classList.add('gone');
+  }
+  document.getElementById('startBtn').onclick = start;
+  ov.addEventListener('pointerdown', start);   // tapping anywhere works
+})();
+
 /* ============================================================
    Web MIDI
    ============================================================ */
@@ -2223,6 +2296,9 @@ function setMidiStatus(connected, text, title) {
   s.classList.toggle('connected', connected);
   s.title = title || '';
   s.style.cursor = 'pointer';
+  // Only surface MIDI when a device is actually connected — no scary "blocked/error"
+  // messaging for the vast majority (mobile / no controller). Hot-plug auto-reveals it.
+  s.style.display = connected ? '' : 'none';
   document.getElementById('midiText').textContent = text;
 }
 
@@ -2561,6 +2637,7 @@ function updateLoopInfo(txt) { document.getElementById('loopInfo').textContent =
 refreshLoopLength();
 
 /* ---------- init ---------- */
+document.getElementById('instrument').value = state.instrument;   // reflect the instant-synth default
 buildChordButtons();
 buildKeyboard();
 seqRenderTracks();
