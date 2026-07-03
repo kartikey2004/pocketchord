@@ -78,14 +78,17 @@
     transition: opacity 0.2s ease, transform 0.2s ease;
   }
   #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
   html, body {
     margin: 0; padding: 0;
     background: var(--bg);
     color: var(--text);
     font-family: 'Space Grotesk', system-ui, -apple-system, sans-serif;
     overscroll-behavior: none;
+    /* Stop long-press selection/callout menus on a touch instrument */
+    -webkit-user-select: none; user-select: none;
   }
+  input, select, textarea { -webkit-user-select: auto; user-select: auto; }
   body {
     margin: 0; box-sizing: border-box;
     padding: calc(10px + env(safe-area-inset-top)) calc(10px + env(safe-area-inset-right)) calc(10px + env(safe-area-inset-bottom)) calc(10px + env(safe-area-inset-left));
@@ -2659,6 +2662,12 @@ window.addEventListener('keyup', (e) => {
 // Global safety nets: never leave a note ringing if focus/visibility is lost.
 window.addEventListener('blur', releaseAllChords);
 document.addEventListener('visibilitychange', () => { if (document.hidden) releaseAllChords(); });
+
+// Suppress the long-press context menu (Android "Download/Share/Print", iOS callout)
+// so holding a pad sustains instead of popping a browser menu. Allow it on form fields.
+document.addEventListener('contextmenu', (e) => {
+  if (!e.target.closest('input, select, textarea')) e.preventDefault();
+});
 
 // Manual panic: kill everything currently sounding (live chords + all track voices).
 document.getElementById('panic').onclick = () => {
