@@ -116,10 +116,12 @@
   .board { display: grid; grid-template-columns: 0.92fr 1fr 1.05fr; gap: 10px; align-items: start; }
   .col { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
   @media (max-width: 940px) {
-    .board { grid-template-columns: 1fr 1fr; gap: 6px; }
-    .board > .col:nth-child(1) { grid-column: 1 / -1; order: 2; }   /* controls row below */
-    .board > .col:nth-child(2) { order: 1; }   /* pads on left */
-    .board > .col:nth-child(3) { order: 1; }   /* chord types on right */
+    .board { display: grid; grid-template-columns: 1fr 1.5fr; gap: 6px; }
+    .board > .col:nth-child(1) { grid-column: 1 / -1; order: 2; }   /* controls full-width below */
+    .board > .col:nth-child(2) { grid-column: 1 / 2; order: 1; flex: 0 0 auto; }   /* pads left */
+    .board > .col:nth-child(3) { grid-column: 2 / -1; order: 1; }   /* right side */
+    .chords { grid-template-columns: 1fr; }   /* chord pads: 1 column on mobile */
+    .chord-btn.span2 { grid-column: span 1; }   /* Bdim: don't span full width */
     .topbar { flex-wrap: wrap; }
     .kbd { margin-bottom: 6px; }
     /* Compact mobile styling */
