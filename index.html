@@ -1136,7 +1136,7 @@ function showToast(msg, ms = 1600) {
    Playing chords
    ============================================================ */
 const heldChords = new Map(); // degreeIndex -> note names currently sounding
-const strumEvents = new Map(); // degreeIndex -> array of scheduled event IDs for strum attacks
+const strumTimeouts = new Map(); // degreeIndex -> array of setTimeout IDs for strum attacks
 
 // Order chord notes for strumming by direction (down = low->high, up = high->low).
 function strumNotes(notes) {
@@ -1159,11 +1159,12 @@ function playChord(degreeIndex, velocity = 0.9) {
     arpReset();
     syncTransport();
   } else if (state.strum) {
-    // Schedule strum attacks with Transport so we can cancel pending ones on release.
-    const eventIds = strumNotes(notes).map((n, i) =>
-      Tone.Transport.schedule(() => synth.triggerAttack(n, undefined, velocity), '+' + (i * state.strumSpeed / 1000))
+    // Original strum: schedule note attacks with delays. Track timeouts so we can cancel
+    // pending attacks if the chord is released early (prevents stuck notes on fast re-press).
+    const timeoutIds = strumNotes(notes).map((n, i) =>
+      setTimeout(() => synth.triggerAttack(n, undefined, velocity), i * state.strumSpeed)
     );
-    strumEvents.set(degreeIndex, eventIds);
+    strumTimeouts.set(degreeIndex, timeoutIds);
   } else {
     synth.triggerAttack(notes, undefined, velocity);
   }
@@ -1180,9 +1181,9 @@ function releaseChord(degreeIndex, force) {
   if ((state.latch || state.sustain) && !force) return; // hold/latch/sustain: ignore the key-up
   const notes = heldChords.get(degreeIndex);
   // Cancel any pending strum attacks for this degree (so fast re-presses don't orphan notes).
-  if (strumEvents.has(degreeIndex)) {
-    strumEvents.get(degreeIndex).forEach(eventId => Tone.Transport.clear(eventId));
-    strumEvents.delete(degreeIndex);
+  if (strumTimeouts.has(degreeIndex)) {
+    strumTimeouts.get(degreeIndex).forEach(id => clearTimeout(id));
+    strumTimeouts.delete(degreeIndex);
   }
   if (synth && !state.arp.on) synth.triggerRelease(notes);
   heldChords.delete(degreeIndex);
