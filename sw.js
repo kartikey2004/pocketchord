@@ -1,5 +1,5 @@
 /* PocketChord service worker — offline app shell + runtime caching of Tone.js & piano samples */
-const CACHE = 'pocketchord-v6';
+const CACHE = 'pocketchord-v7';
 const SHELL = [
   './',
   './index.html',
