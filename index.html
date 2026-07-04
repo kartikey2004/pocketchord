@@ -1058,7 +1058,7 @@ function createCustomSynth() {
   return engine;
 }
 
-function makeSynth(kind) {
+function makeSynth(kind, maxVoices = 8) {
   if (kind === 'custom') return createCustomSynth();
   if (kind === 'piano') {
     return new Tone.Sampler({
@@ -1079,7 +1079,7 @@ function makeSynth(kind) {
   }
   if (kind === 'pad') {
     return new Tone.PolySynth(Tone.AMSynth, {
-      maxPolyphony: 8,
+      maxPolyphony: maxVoices,
       harmonicity: 1.5,
       envelope: { attack: 0.6, decay: 0.3, sustain: 0.8, release: 2.5 },
       modulationEnvelope: { attack: 0.8, decay: 0.2, sustain: 0.6, release: 2 },
@@ -1088,7 +1088,7 @@ function makeSynth(kind) {
   }
   if (kind === 'epiano') {
     return new Tone.PolySynth(Tone.FMSynth, {
-      maxPolyphony: 8,
+      maxPolyphony: maxVoices,
       harmonicity: 3, modulationIndex: 8,
       envelope: { attack: 0.005, decay: 0.6, sustain: 0.1, release: 1.4 },
       modulationEnvelope: { attack: 0.01, decay: 0.4, sustain: 0.0, release: 0.6 }
@@ -1096,7 +1096,7 @@ function makeSynth(kind) {
   }
   if (kind === 'strings') {
     return new Tone.PolySynth(Tone.AMSynth, {
-      maxPolyphony: 8,
+      maxPolyphony: maxVoices,
       harmonicity: 2,
       oscillator: { type: 'sawtooth' },
       envelope: { attack: 0.9, decay: 0.3, sustain: 0.9, release: 1.8 }
@@ -1104,14 +1104,14 @@ function makeSynth(kind) {
   }
   if (kind === 'lead') {
     return new Tone.PolySynth(Tone.Synth, {
-      maxPolyphony: 8,
+      maxPolyphony: maxVoices,
       oscillator: { type: 'sawtooth' },
       envelope: { attack: 0.02, decay: 0.2, sustain: 0.6, release: 0.6 }
     });
   }
   if (kind === 'organ') {
     return new Tone.PolySynth(Tone.Synth, {
-      maxPolyphony: 8,
+      maxPolyphony: maxVoices,
       oscillator: { type: 'fatsawtooth', count: 3, spread: 20 },
       envelope: { attack: 0.01, decay: 0.0, sustain: 1.0, release: 0.25 }
     });
@@ -1476,7 +1476,7 @@ function buildSeq() {
 function buildTrackSynth(tr) {
   if (!fxBuilt) buildFX();
   if (tr.synth) { try { tr.synth.releaseAll && tr.synth.releaseAll(); } catch(e){} tr.synth.dispose(); }
-  tr.synth = makeSynth(tr.instrument);
+  tr.synth = makeSynth(tr.instrument, 4);  // Track synths: 4 voices max (conserve CPU with multiple tracks)
   tr.synth.connect(chorus);
 }
 function buildAllTrackSynths() { seqState.tracks.forEach(buildTrackSynth); }
