@@ -1180,6 +1180,12 @@ function releaseChord(degreeIndex, force) {
   if (state.arp.on) syncTransport();
   setHeldVisual(degreeIndex, false);
   updateKeyboard();
+  // Once nothing is held, flush any orphaned voice left by a rapid same-chord
+  // retrigger (PolySynth voice-steal — worst on sustaining sounds like Organ).
+  // Legit release tails are already releasing, so re-releasing them is a no-op.
+  if (synth && synth.releaseAll && !state.arp.on && heldChords.size === 0) {
+    try { synth.releaseAll(); } catch (_) {}
+  }
 }
 
 // Loop playback path: schedule a finished chord (attack+release) at an exact audio time.
