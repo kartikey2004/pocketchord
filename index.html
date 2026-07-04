@@ -1161,7 +1161,7 @@ function playChord(degreeIndex, velocity = 0.9) {
   } else if (state.strum) {
     // Schedule strum attacks with Transport so we can cancel pending ones on release.
     const eventIds = strumNotes(notes).map((n, i) =>
-      Tone.Transport.schedule((time) => synth.triggerAttack(n, time, velocity), '+' + (i * state.strumSpeed / 1000))
+      Tone.Transport.schedule(() => synth.triggerAttack(n, undefined, velocity), '+' + (i * state.strumSpeed / 1000))
     );
     strumEvents.set(degreeIndex, eventIds);
   } else {
