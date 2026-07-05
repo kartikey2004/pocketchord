@@ -468,10 +468,13 @@
   .panel { margin: 0; padding: 12px; border-radius: 16px; }
   .label { font-size: 10px; margin-bottom: 8px; }
 
-  /* Home rows */
-  .home-grid-a { display: grid; grid-template-columns: 1.05fr 1fr; gap: 10px; align-items: start; }
+  /* Home rows — grid-a grows to fill tall screens (chord pads = hero) */
+  .home-grid-a { display: grid; grid-template-columns: 1.05fr 1fr; gap: 10px; align-items: stretch; flex: 1 0 auto; }
+  .home-grid-a > .panel { display: flex; flex-direction: column; }
+  .home-grid-a .chords { flex: 1 1 auto; grid-auto-rows: 1fr; }
   .colstack { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-  .home-grid-c { display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 8px; align-items: start; }
+  .colstack > .panel:last-child { flex: 1 1 auto; }
+  .home-grid-c { display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 8px; align-items: stretch; }
   .home-grid-c .panel { padding: 10px; }
   .home-grid-c select, .home-grid-c input[type=range] { width: 100%; }
 
@@ -484,7 +487,7 @@
   .stack { gap: 3px; }
 
   .chords { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .chord-btn { min-height: 0; padding: 6px; }
+  .chord-btn { aspect-ratio: auto; min-height: 58px; padding: 6px; }
   .chord-btn .name { font-size: 16px; }
   .chord-btn .deg { font-size: 10px; }
   .chord-btn.span2 { padding: 12px; }
