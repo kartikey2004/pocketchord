@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
@@ -170,34 +170,7 @@
     padding: 10px 11px;
   }
 
-  /* Dashboard layout */
-  .topbar { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
-  .topbar .oled { flex: 1 1 auto; margin-bottom: 0; padding: 8px 16px; }
-  .topbar .oled .oled-main { font-size: 28px; }
-  .board { display: grid; grid-template-columns: 0.92fr 1fr 1.05fr; gap: 10px; align-items: start; }
-  .col { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-  @media (max-width: 940px) {
-    .wrap { padding: 0; }
-    body { padding: 0; }
-    .topbar { flex-wrap: wrap; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--border); }
-    .board { display: flex; flex-direction: column; gap: 0; margin: 0; }
-    .board > .col:nth-child(1) { order: 3; flex: 0 0 auto; padding: 8px; background: var(--bg); border-top: 1px solid var(--border); }
-    .board > .col:nth-child(2) { order: 1; flex: 0 0 auto; padding: 12px; }
-    .board > .col:nth-child(3) { order: 2; flex: 1 1 auto; overflow-y: auto; padding: 12px; }
-    .kbd { height: 40px; margin: 0 12px 8px 12px; }
-    .chords { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .chord-btn { aspect-ratio: 1; padding: 8px; min-height: auto; font-size: 14px; }
-    .chord-btn .name { font-size: 18px; }
-    .chord-btn .deg { font-size: 9px; }
-    .panel { margin: 8px 0; padding: 12px; border-radius: 14px; }
-    .label { font-size: 10px; margin-bottom: 6px; }
-    .toggle { padding: 8px 12px; font-size: 12px; min-height: 40px; }
-    .toggle.small { padding: 6px 10px; font-size: 11px; min-height: 36px; }
-    select { font-size: 12px; min-height: 40px; }
-    .row { gap: 6px; }
-    .grid2 { gap: 8px; }
-    .stack { gap: 2px; }
-  }
+  /* Dashboard layout: replaced by v16 phone-app layout (see end of stylesheet) */
   .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 6px; }
 
@@ -452,53 +425,93 @@
   .accent-grid .acc.ghost  { color: var(--muted); background: #1a1a1d; }
   .accent-grid .acc.silent { color: #5a3030; background: #241416; border-style: dashed; }
 
-  /* ---------- Mobile-first tab layout (v15) ---------- */
-  body { padding-bottom: 0; }
-  .wrap { display: flex; flex-direction: column; height: 100dvh; padding: 0; }
-  .wrap .topbar { padding: calc(10px + env(safe-area-inset-top)) 12px 10px; margin: 0; flex: 0 0 auto; border-bottom: 1px solid var(--border); }
-  .wrap > .kbd { flex: 0 0 auto; margin: 8px 12px; }
+  /* ---------- v16: phone-app layout (matches design mockup) ---------- */
+  body { padding: 0; }
+  .wrap { max-width: 640px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; height: 100dvh; padding: 0; }
 
-  .tab-page {
-    flex: 1 1 auto;
-    overflow-y: auto;
-    padding: 12px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+  .topbar {
+    flex: 0 0 auto; display: flex; align-items: center; gap: 6px; flex-wrap: nowrap;
+    padding: calc(10px + env(safe-area-inset-top)) 12px 10px; margin: 0;
   }
+  .topbar h1 { font-size: 16px; margin-right: auto; min-width: 0; }
+  .topbar .chip { flex: 0 0 auto; padding: 8px 11px; font-size: 12px; border-radius: 999px; min-height: 0; white-space: nowrap; }
+  .topbar .status {
+    flex: 0 0 auto; font-size: 11px; background: var(--panel); border: 1px solid var(--border);
+    border-radius: 999px; padding: 7px 10px;
+  }
+
+  /* Collapsible KEY card */
+  .key-card {
+    flex: 0 0 auto; margin: 2px 12px 10px;
+    background: linear-gradient(135deg, #142a42 0%, #0d1a2b 100%);
+    border: 1px solid #23405d; border-radius: 16px;
+  }
+  .key-head { display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; user-select: none; }
+  .key-left { flex: 1 1 auto; min-width: 0; }
+  .key-lbl { font-size: 10px; letter-spacing: 1.5px; color: #7fa3c4; font-weight: 700; margin-bottom: 4px; }
+  .key-head .oled {
+    background: transparent; border: none; box-shadow: none; padding: 0; margin: 0;
+    justify-content: flex-start; gap: 14px;
+  }
+  .key-head .oled-main { flex: 0 1 auto; text-align: left; font-size: 22px; }
+  .key-head .oled-side { min-width: 0; }
+  .key-chevron { flex: 0 0 auto; color: #7fa3c4; font-size: 13px; transition: transform 0.2s ease; }
+  .key-card.open .key-chevron { transform: rotate(180deg); }
+  .key-body { display: none; padding: 0 14px 14px; }
+  .key-card.open .key-body { display: block; }
+
+  .wrap > .kbd { flex: 0 0 auto; height: 64px; margin: 0 12px 10px; }
+
+  /* Scrollable pages */
+  .tab-page { flex: 1 1 auto; overflow-y: auto; padding: 2px 12px 14px; display: flex; flex-direction: column; gap: 10px; }
   .tab-page.hidden { display: none; }
+  .panel { margin: 0; padding: 12px; border-radius: 16px; }
+  .label { font-size: 10px; margin-bottom: 8px; }
 
-  .key-selector { flex: 0 0 auto; }
+  /* Home rows */
+  .home-grid-a { display: grid; grid-template-columns: 1.05fr 1fr; gap: 10px; align-items: start; }
+  .colstack { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+  .home-grid-c { display: grid; grid-template-columns: 1.1fr 1fr 1fr; gap: 8px; align-items: start; }
+  .home-grid-c .panel { padding: 10px; }
+  .home-grid-c select, .home-grid-c input[type=range] { width: 100%; }
 
-  .hero-chords { flex: 0 0 auto; }
-  .hero-chords .chords { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-  .hero-chords .chord-btn { aspect-ratio: 1 / 0.9; }
-  .hero-chords .chord-btn .name { font-size: 26px; }
-  .hero-chords .chord-btn .deg { font-size: 13px; }
+  /* Compact controls */
+  .toggle { min-height: 38px; padding: 8px 9px; font-size: 12px; min-width: 48px; }
+  .toggle.small { min-height: 32px; padding: 6px 8px; font-size: 11px; min-width: 34px; }
+  select { min-height: 38px; padding: 8px 10px; font-size: 12px; }
+  .row { gap: 6px; }
+  .grid2 { gap: 8px; }
+  .stack { gap: 3px; }
 
+  .chords { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .chord-btn { min-height: 0; padding: 6px; }
+  .chord-btn .name { font-size: 16px; }
+  .chord-btn .deg { font-size: 10px; }
+  .chord-btn.span2 { padding: 12px; }
+
+  /* Bottom navigation (5 tabs) */
   .bottom-nav {
-    flex: 0 0 auto;
-    display: flex;
-    border-top: 1px solid var(--border);
-    background: var(--panel);
+    flex: 0 0 auto; display: flex; gap: 2px;
+    border-top: 1px solid var(--border); background: var(--panel);
     padding: 6px calc(6px + env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) calc(6px + env(safe-area-inset-left));
-    gap: 4px;
   }
   .nav-tab {
-    flex: 1 1 0;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    flex: 1 1 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
     gap: 2px; background: transparent; border: none; border-radius: 12px;
-    color: var(--muted); padding: 8px 4px; min-height: 56px;
-    box-shadow: none; backdrop-filter: none;
+    color: var(--muted); padding: 7px 2px; min-height: 54px;
+    box-shadow: none; backdrop-filter: none; min-width: 0;
   }
-  .nav-tab .nav-ico { font-size: 20px; line-height: 1; }
-  .nav-tab .nav-label { font-size: 10px; font-weight: 700; letter-spacing: 0.3px; }
+  .nav-tab .nav-ico { font-size: 19px; line-height: 1; }
+  .nav-tab .nav-label { font-size: 10px; font-weight: 700; letter-spacing: 0.2px; }
   .nav-tab.active { color: var(--accent); background: var(--panel-2); }
 
-  @media (min-width: 941px) {
-    .wrap { max-width: 900px; margin: 0 auto; }
-    .tab-page { width: 100%; }
+  /* Placeholder pages */
+  .placeholder {
+    flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 8px; color: var(--muted); text-align: center; padding: 40px 20px; font-size: 13px; line-height: 1.5;
   }
+  .placeholder .ph-ico { font-size: 42px; }
+  .placeholder .ph-title { font-size: 17px; font-weight: 700; color: var(--text); }
 </style>
 </head>
 <body>
@@ -521,197 +534,62 @@
   <!-- Top bar: title · display · status · transport-safety -->
   <div class="topbar">
     <h1><span class="dot"></span> PocketChord</h1>
-    <div class="oled" id="display">
-      <div class="oled-side">
-        <span id="dispKey">C maj</span>
-        <span class="oled-deg" id="dispDeg">I</span>
-      </div>
-      <div class="oled-main" id="dispChord">—</div>
-      <div class="oled-side oled-flags" id="dispFlags"></div>
-    </div>
     <div class="status" id="midiStatus" title="Tap to scan MIDI"><span class="led"></span><span id="midiText">MIDI…</span></div>
     <button class="chip" id="themeBtn" title="Toggle light / dark">🌙</button>
     <button class="chip" id="panic" style="background:#3a1414;border-color:#5e1f1f;color:#ffb3b3;">⏹ Off</button>
-    <button class="chip" id="enableAudio">🔊 Enable</button>
+    <button class="chip" id="enableAudio" style="background:var(--accent);border-color:var(--accent);color:#fff;">🔊 Audio</button>
+  </div>
+
+  <!-- Collapsible KEY card -->
+  <div class="key-card" id="keyCard">
+    <div class="key-head" id="keyToggle">
+      <div class="key-left">
+        <div class="key-lbl">KEY</div>
+        <div class="oled" id="display">
+          <div class="oled-side"><span id="dispKey">C maj</span><span class="oled-deg" id="dispDeg">I</span></div>
+          <div class="oled-main" id="dispChord">—</div>
+          <div class="oled-side oled-flags" id="dispFlags"></div>
+        </div>
+      </div>
+      <span class="key-chevron">▼</span>
+    </div>
+    <div class="key-body">
+      <div class="label">Key</div>
+      <div class="scroller" id="keyScroller"></div>
+      <div class="label" style="margin-top:10px;">Mode</div>
+      <div class="row" id="modeRow"></div>
+    </div>
   </div>
 
   <!-- Real-time keyboard visualization -->
   <div class="kbd" id="kbd"></div>
 
   <div class="tab-page" id="tab-home">
-    <div class="panel key-selector">
-      <div class="panel">
-        <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:8px;">
-          <div class="label" style="margin:0;">Key</div>
-          <div class="row" id="modeRow" style="flex:0 0 auto;"></div>
-        </div>
-        <div class="scroller" id="keyScroller"></div>
-        <div class="label" style="margin-top:10px;">Chord Type</div>
-        <div class="row" id="typeRow"></div>
-      </div>
 
-      
-    </div>
-
-    <div class="panel hero-chords">
+    <div class="home-grid-a">
+      <!-- Chord pads -->
       <div class="panel">
+        <div class="label">Chords</div>
         <div class="chords" id="chords"></div>
       </div>
 
-      
-    </div>
+      <div class="colstack">
+        <!-- Chord type -->
+        <div class="panel">
+          <div class="label">Chord Type</div>
+          <div class="row" id="typeRow"></div>
+        </div>
 
-    <div class="panel">
-      <div class="panel">
-        <div class="grid2">
-          <div class="stack">
-            <div class="label">Tempo <span id="bpmVal" class="val" style="color:var(--accent-2)">100</span> BPM</div>
-            <div class="knob-wrap">
-              <input type="range" id="bpm" min="50" max="200" value="100" step="1" />
-            </div>
+        <!-- Looper -->
+        <div class="panel">
+          <div class="label">Looper <span id="loopInfo" style="color:var(--muted);text-transform:none;letter-spacing:0;">— empty</span></div>
+          <div class="playhead" id="playhead"><div class="playhead-fill" id="playheadFill"></div></div>
+          <div class="row" style="margin-bottom:8px;">
+            <button class="toggle" id="loopRec"><span class="rec-dot" style="display:inline-block;margin-right:6px;vertical-align:middle;"></span>Record</button>
+            <button class="toggle" id="loopPlay">▶ Play</button>
+            <button class="toggle" id="loopClear">Clear</button>
           </div>
           <div class="stack">
-            <div class="label">Metronome / Tap</div>
-            <div class="row">
-              <button class="toggle" id="metro">🔇 Off</button>
-              <button class="toggle" id="tapTempo">Tap</button>
-            </div>
-          </div>
-        </div>
-        <div class="beat-dots" id="beatDots" style="margin-top:10px;"></div>
-        <div class="label" style="margin-top:10px;">Performance</div>
-        <div class="row">
-          <button class="toggle" id="latchBtn">Latch</button>
-          <button class="toggle" id="sustainBtn">Sustain</button>
-        </div>
-      </div>
-    
-    </div>
-  </div>
-
-  <div class="tab-page hidden" id="tab-sound">
-    <div class="panel">
-      <div class="panel">
-        <div class="grid2">
-          <div class="stack">
-            <div class="label">Instrument (live)</div>
-            <div class="row" style="gap:6px;flex-wrap:nowrap;">
-              <select id="instrument" style="flex:1 1 auto;min-width:0;">
-                <option value="piano">🎹 Piano</option>
-                <option value="pad">🌫️ Warm Pad</option>
-                <option value="epiano">🎛️ Electric Piano</option>
-                <option value="strings">🎻 Strings</option>
-                <option value="lead">⚡ Synth Lead</option>
-                <option value="organ">🪗 Organ</option>
-                <option value="custom">🎚️ Custom Synth</option>
-              </select>
-              <button class="toggle small" id="editSynth" title="Open Synth Designer">⚙</button>
-            </div>
-          </div>
-          <div class="stack">
-            <div class="label">Master Volume</div>
-            <div class="knob-wrap">
-              <input type="range" id="volume" min="-40" max="6" value="-8" step="1" />
-              <span class="val" id="volVal">-8</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      
-    </div>
-
-    <div class="panel">
-      <div class="panel">
-        <div class="label">Effects</div>
-        <div class="row" style="margin-bottom:10px;">
-          <button class="toggle" id="fxReverb">Reverb</button>
-          <button class="toggle" id="fxDelay">Delay</button>
-          <button class="toggle" id="fxChorus">Chorus</button>
-          <button class="toggle" id="fxStrum">Strum</button>
-          <button class="toggle" id="fxBass">Bass</button>
-        </div>
-        <div class="grid2">
-          <div class="stack">
-            <div class="label">Octave <span id="octVal" class="val" style="color:var(--accent-2)">0</span></div>
-            <div class="row">
-              <button class="toggle small" id="octDown">−</button>
-              <button class="toggle small" id="octUp">+</button>
-            </div>
-          </div>
-          <div class="stack">
-            <div class="label">Inversion</div>
-            <div class="row" id="invRow"></div>
-          </div>
-        </div>
-        <div class="grid2" style="margin-top:10px;">
-          <div class="stack">
-            <div class="label">Voicing</div>
-            <select id="voicingSel">
-              <option value="close">Close</option>
-              <option value="open">Open</option>
-              <option value="drop2">Drop-2</option>
-              <option value="drop3">Drop-3</option>
-              <option value="wide">Wide</option>
-              <option value="piano">Piano</option>
-              <option value="guitar">Guitar</option>
-              <option value="strings">Strings</option>
-            </select>
-          </div>
-          <div class="stack">
-            <div class="label">Strum dir / speed</div>
-            <div class="row" style="gap:6px;flex-wrap:nowrap;">
-              <select id="strumDir" style="flex:1 1 auto;min-width:0;">
-                <option value="down">Down</option>
-                <option value="up">Up</option>
-                <option value="alt">Alt</option>
-                <option value="random">Rnd</option>
-              </select>
-              <input type="range" id="strumSpeed" min="4" max="60" step="1" value="18" style="flex:1 1 auto;min-width:0;" />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      
-    </div>
-
-    <div class="panel">
-      <div class="panel">
-        <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:10px;">
-          <div class="label" style="margin:0;">Arpeggiator</div>
-          <div class="row" style="flex:0 0 auto;gap:6px;">
-            <button class="toggle small" id="arpEdit" title="Open Arp Designer">⚙</button>
-            <button class="toggle small" id="arpOn">Off</button>
-          </div>
-        </div>
-        <div class="grid2">
-          <div class="stack">
-            <div class="label">Pattern</div>
-            <select id="arpPatternSel"></select>
-          </div>
-          <div class="stack">
-            <div class="label">Rate</div>
-            <div class="row" id="arpRate"></div>
-          </div>
-        </div>
-      </div>
-    
-    </div>
-  </div>
-
-  <div class="tab-page hidden" id="tab-seq">
-    <div class="panel">
-      <div class="panel">
-        <div class="label">Looper <span id="loopInfo" style="color:var(--muted);text-transform:none;letter-spacing:0;">— empty</span></div>
-        <div class="playhead" id="playhead"><div class="playhead-fill" id="playheadFill"></div></div>
-        <div class="row" style="margin-bottom:8px;">
-          <button class="toggle" id="loopRec"><span class="rec-dot" style="display:inline-block;margin-right:6px;vertical-align:middle;"></span>Record</button>
-          <button class="toggle" id="loopPlay">▶ Play</button>
-          <button class="toggle" id="loopClear">Clear</button>
-        </div>
-        <div class="row">
-          <div class="stack" style="flex:1 1 auto;">
             <div class="label">Length</div>
             <select id="loopBars">
               <option value="1">1 bar</option>
@@ -720,7 +598,7 @@
               <option value="8">8 bars</option>
             </select>
           </div>
-          <div class="stack" style="flex:0 0 auto;">
+          <div class="stack" style="margin-top:8px;">
             <div class="label">Options</div>
             <div class="row">
               <button class="toggle small on" id="quantize">⌗ Quantize</button>
@@ -729,65 +607,176 @@
           </div>
         </div>
       </div>
-
-      
     </div>
 
+    <!-- Instrument + master volume -->
     <div class="panel">
-      <div class="panel">
-        <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:10px;">
-          <div class="label" style="margin:0;">Chord Sequencer</div>
-          <div class="row" style="flex:0 0 auto;">
-            <button class="toggle small" id="seqEdit">✎ Edit</button>
-            <button class="toggle small" id="seqPlay">▶ Play</button>
+      <div class="grid2">
+        <div class="stack">
+          <div class="label">Instrument (live)</div>
+          <div class="row" style="gap:6px;flex-wrap:nowrap;">
+            <select id="instrument" style="flex:1 1 auto;min-width:0;">
+              <option value="piano">🎹 Piano</option>
+              <option value="pad">🌫️ Warm Pad</option>
+              <option value="epiano">🎛️ Electric Piano</option>
+              <option value="strings">🎻 Strings</option>
+              <option value="lead">⚡ Synth Lead</option>
+              <option value="organ">🪗 Organ</option>
+              <option value="custom">🎚️ Custom Synth</option>
+            </select>
+            <button class="toggle small" id="editSynth" title="Open Synth Designer">⚙</button>
           </div>
         </div>
-        <div class="seq-tracks" id="seqTracks"></div>
-        <div class="row seq-track-ctrl" style="margin:8px 0 10px;">
-          <select id="trackInst" style="flex:1 1 auto;">
-            <option value="piano">🎹 Piano</option>
-            <option value="pad">🌫️ Warm Pad</option>
-            <option value="epiano">🎛️ Electric Piano</option>
-            <option value="strings">🎻 Strings</option>
-            <option value="lead">⚡ Synth Lead</option>
-            <option value="organ">🪗 Organ</option>
-            <option value="custom">🎚️ Custom Synth</option>
-          </select>
-          <button class="toggle small" id="trackMute">Mute</button>
-          <div class="row" style="flex:0 0 auto;align-items:center;gap:4px;">
-            <span class="label" style="margin:0;">Oct</span>
-            <button class="toggle small" id="trackOctDown">−</button>
-            <span class="val" id="trackOct" style="min-width:22px;color:var(--accent-2)">0</span>
-            <button class="toggle small" id="trackOctUp">+</button>
-          </div>
-        </div>
-        <div class="seq-grid" id="seqGrid"></div>
-        <div class="row" style="margin-top:10px;">
-          <div class="stack" style="flex:1 1 auto;">
-            <div class="label">Steps</div>
-            <div class="row" id="seqLen"></div>
-          </div>
-          <div class="stack" style="flex:1 1 auto;">
-            <div class="label">Step rate</div>
-            <div class="row" id="seqRate"></div>
-          </div>
-          <div class="stack" style="flex:0 0 auto;">
-            <div class="label">Cursor</div>
-            <div class="row">
-              <button class="toggle small" id="seqRest">Rest →</button>
-              <button class="toggle small" id="seqClear">Clear</button>
-            </div>
+        <div class="stack">
+          <div class="label">Master Volume</div>
+          <div class="knob-wrap">
+            <input type="range" id="volume" min="-40" max="6" value="-8" step="1" />
+            <span class="val" id="volVal">-8</span>
           </div>
         </div>
       </div>
-    
     </div>
+
+    <div class="home-grid-c">
+      <!-- Effects & shaping -->
+      <div class="panel">
+        <div class="label">Effects</div>
+        <div class="row" style="margin-bottom:8px;">
+          <button class="toggle" id="fxReverb">Reverb</button>
+          <button class="toggle" id="fxDelay">Delay</button>
+          <button class="toggle" id="fxChorus">Chorus</button>
+          <button class="toggle" id="fxStrum">Strum</button>
+          <button class="toggle" id="fxBass">Bass</button>
+        </div>
+        <div class="label">Octave <span id="octVal" class="val" style="color:var(--accent-2)">0</span></div>
+        <div class="row" style="margin-bottom:8px;">
+          <button class="toggle small" id="octDown">−</button>
+          <button class="toggle small" id="octUp">+</button>
+        </div>
+        <div class="label">Inversion</div>
+        <div class="row" id="invRow" style="margin-bottom:8px;"></div>
+        <div class="label">Voicing</div>
+        <select id="voicingSel" style="margin-bottom:8px;">
+          <option value="close">Close</option>
+          <option value="open">Open</option>
+          <option value="drop2">Drop-2</option>
+          <option value="drop3">Drop-3</option>
+          <option value="wide">Wide</option>
+          <option value="piano">Piano</option>
+          <option value="guitar">Guitar</option>
+          <option value="strings">Strings</option>
+        </select>
+        <div class="label">Strum dir / speed</div>
+        <select id="strumDir" style="margin-bottom:6px;">
+          <option value="down">Down</option>
+          <option value="up">Up</option>
+          <option value="alt">Alt</option>
+          <option value="random">Rnd</option>
+        </select>
+        <input type="range" id="strumSpeed" min="4" max="60" step="1" value="18" />
+      </div>
+
+      <!-- Tempo & performance -->
+      <div class="panel">
+        <div class="label">Tempo &amp; Performance</div>
+        <div style="margin-bottom:6px;"><span id="bpmVal" class="val" style="color:var(--accent);font-size:18px;">100</span> <span class="label" style="display:inline;margin:0;">BPM</span></div>
+        <input type="range" id="bpm" min="50" max="200" value="100" step="1" style="margin-bottom:10px;" />
+        <div class="row" style="margin-bottom:8px;">
+          <button class="toggle" id="tapTempo">Tap</button>
+          <button class="toggle" id="metro">🔇 Off</button>
+        </div>
+        <div class="beat-dots" id="beatDots" style="margin-bottom:10px;"></div>
+        <div class="label">Performance</div>
+        <div class="row">
+          <button class="toggle" id="latchBtn">Latch</button>
+          <button class="toggle" id="sustainBtn">Sustain</button>
+        </div>
+      </div>
+
+      <!-- Arpeggiator -->
+      <div class="panel">
+        <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:8px;">
+          <div class="label" style="margin:0;">Arp</div>
+          <div class="row" style="flex:0 0 auto;gap:4px;">
+            <button class="toggle small" id="arpEdit" title="Open Arp Designer">⚙</button>
+            <button class="toggle small" id="arpOn">Off</button>
+          </div>
+        </div>
+        <div class="label">Pattern</div>
+        <select id="arpPatternSel" style="margin-bottom:8px;"></select>
+        <div class="label">Rate</div>
+        <div class="row" id="arpRate"></div>
+      </div>
+    </div>
+
+    <!-- Chord sequencer -->
+    <div class="panel">
+      <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div class="label" style="margin:0;">Chord Sequencer</div>
+        <div class="row" style="flex:0 0 auto;">
+          <button class="toggle small" id="seqEdit">✎ Edit</button>
+          <button class="toggle small" id="seqPlay">▶ Play</button>
+        </div>
+      </div>
+      <div class="seq-tracks" id="seqTracks"></div>
+      <div class="row seq-track-ctrl" style="margin:8px 0 10px;">
+        <select id="trackInst" style="flex:1 1 auto;">
+          <option value="piano">🎹 Piano</option>
+          <option value="pad">🌫️ Warm Pad</option>
+          <option value="epiano">🎛️ Electric Piano</option>
+          <option value="strings">🎻 Strings</option>
+          <option value="lead">⚡ Synth Lead</option>
+          <option value="organ">🪗 Organ</option>
+          <option value="custom">🎚️ Custom Synth</option>
+        </select>
+        <button class="toggle small" id="trackMute">Mute</button>
+        <div class="row" style="flex:0 0 auto;align-items:center;gap:4px;">
+          <span class="label" style="margin:0;">Oct</span>
+          <button class="toggle small" id="trackOctDown">−</button>
+          <span class="val" id="trackOct" style="min-width:22px;color:var(--accent-2)">0</span>
+          <button class="toggle small" id="trackOctUp">+</button>
+        </div>
+      </div>
+      <div class="seq-grid" id="seqGrid"></div>
+      <div class="row" style="margin-top:10px;">
+        <div class="stack" style="flex:1 1 auto;">
+          <div class="label">Steps</div>
+          <div class="row" id="seqLen"></div>
+        </div>
+        <div class="stack" style="flex:1 1 auto;">
+          <div class="label">Step rate</div>
+          <div class="row" id="seqRate"></div>
+        </div>
+        <div class="stack" style="flex:0 0 auto;">
+          <div class="label">Cursor</div>
+          <div class="row">
+            <button class="toggle small" id="seqRest">Rest →</button>
+            <button class="toggle small" id="seqClear">Clear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tab-page hidden" id="tab-songs">
+    <div class="placeholder"><div class="ph-ico">🎵</div><div class="ph-title">Songs</div><div>Save and load chord progressions —<br/>coming soon.</div></div>
+  </div>
+  <div class="tab-page hidden" id="tab-pads">
+    <div class="placeholder"><div class="ph-ico">🎛️</div><div class="ph-title">Pads</div><div>Custom pad layouts —<br/>coming soon.</div></div>
+  </div>
+  <div class="tab-page hidden" id="tab-settings">
+    <div class="placeholder"><div class="ph-ico">⚙️</div><div class="ph-title">Settings</div><div>Use 🌙 in the top bar to switch theme.<br/>More settings coming soon.</div></div>
+  </div>
+  <div class="tab-page hidden" id="tab-about">
+    <div class="placeholder"><div class="ph-ico">🎹</div><div class="ph-title">PocketChord</div><div>HiChord-style chord synth · arpeggiator · sequencer.<br/>Works offline — add to Home Screen.</div></div>
   </div>
 
   <nav class="bottom-nav">
     <button class="nav-tab active" data-tab="tab-home"><span class="nav-ico">🏠</span><span class="nav-label">Home</span></button>
-    <button class="nav-tab" data-tab="tab-sound"><span class="nav-ico">🎛️</span><span class="nav-label">Sound</span></button>
-    <button class="nav-tab" data-tab="tab-seq"><span class="nav-ico">🎚️</span><span class="nav-label">Sequencer</span></button>
+    <button class="nav-tab" data-tab="tab-songs"><span class="nav-ico">🎵</span><span class="nav-label">Songs</span></button>
+    <button class="nav-tab" data-tab="tab-pads"><span class="nav-ico">🎛️</span><span class="nav-label">Pads</span></button>
+    <button class="nav-tab" data-tab="tab-settings"><span class="nav-ico">⚙️</span><span class="nav-label">Settings</span></button>
+    <button class="nav-tab" data-tab="tab-about"><span class="nav-ico">ℹ️</span><span class="nav-label">About</span></button>
   </nav>
   </div>
 
@@ -2857,6 +2846,13 @@ document.querySelectorAll('.nav-tab').forEach(tab => {
     tab.classList.add('active');
   });
 });
+
+/* ---------- Collapsible KEY card ---------- */
+(function () {
+  const card = document.getElementById('keyCard');
+  const head = document.getElementById('keyToggle');
+  if (card && head) head.addEventListener('click', () => card.classList.toggle('open'));
+})();
 </script>
 </body>
 </html>
