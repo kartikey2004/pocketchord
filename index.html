@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-<title>PocketChord — HiChord-style Synth</title>
+<title>PocketChord â€” HiChord-style Synth</title>
 <!-- PWA / installable app -->
 <link rel="manifest" href="manifest.json" />
 <meta name="theme-color" content="#0f0f0f" />
@@ -454,13 +454,15 @@
 </style>
 </head>
 <body>
+<!-- Last updated: 2026-07-05 20:50:25 -->
+
   <!-- Tap-to-start: unlocks audio (browsers require a gesture) so the first pad always sounds -->
   <div id="startOverlay">
     <div class="start-card">
       <div class="start-dot"></div>
       <div class="start-title">PocketChord</div>
-      <div class="start-sub">Tap a button to play a chord · hold to sustain</div>
-      <button class="start-btn" id="startBtn">▶ Tap to start</button>
+      <div class="start-sub">Tap a button to play a chord Â· hold to sustain</div>
+      <button class="start-btn" id="startBtn">â–¶ Tap to start</button>
       <div class="start-loading" id="startLoading"></div>
     </div>
   </div>
@@ -468,7 +470,7 @@
   <div id="toast"></div>
 
   <div class="wrap">
-  <!-- Top bar: title · display · status · transport-safety -->
+  <!-- Top bar: title Â· display Â· status Â· transport-safety -->
   <div class="topbar">
     <h1><span class="dot"></span> PocketChord</h1>
     <div class="oled" id="display">
@@ -476,20 +478,20 @@
         <span id="dispKey">C maj</span>
         <span class="oled-deg" id="dispDeg">I</span>
       </div>
-      <div class="oled-main" id="dispChord">—</div>
+      <div class="oled-main" id="dispChord">â€”</div>
       <div class="oled-side oled-flags" id="dispFlags"></div>
     </div>
-    <div class="status" id="midiStatus" title="Tap to scan MIDI"><span class="led"></span><span id="midiText">MIDI…</span></div>
-    <button class="chip" id="themeBtn" title="Toggle light / dark">🌙</button>
-    <button class="chip" id="panic" style="background:#3a1414;border-color:#5e1f1f;color:#ffb3b3;">⏹ Off</button>
-    <button class="chip" id="enableAudio">🔊 Enable</button>
+    <div class="status" id="midiStatus" title="Tap to scan MIDI"><span class="led"></span><span id="midiText">MIDIâ€¦</span></div>
+    <button class="chip" id="themeBtn" title="Toggle light / dark">ðŸŒ™</button>
+    <button class="chip" id="panic" style="background:#3a1414;border-color:#5e1f1f;color:#ffb3b3;">â¹ Off</button>
+    <button class="chip" id="enableAudio">ðŸ”Š Enable</button>
   </div>
 
   <!-- Real-time keyboard visualization -->
   <div class="kbd" id="kbd"></div>
 
   <div class="board">
-    <!-- ===== Column A — sound shaping ===== -->
+    <!-- ===== Column A â€” sound shaping ===== -->
     <div class="col">
       <!-- Key + Type -->
       <div class="panel">
@@ -509,15 +511,15 @@
             <div class="label">Instrument (live)</div>
             <div class="row" style="gap:6px;flex-wrap:nowrap;">
               <select id="instrument" style="flex:1 1 auto;min-width:0;">
-                <option value="piano">🎹 Piano</option>
-                <option value="pad">🌫️ Warm Pad</option>
-                <option value="epiano">🎛️ Electric Piano</option>
-                <option value="strings">🎻 Strings</option>
-                <option value="lead">⚡ Synth Lead</option>
-                <option value="organ">🪗 Organ</option>
-                <option value="custom">🎚️ Custom Synth</option>
+                <option value="piano">ðŸŽ¹ Piano</option>
+                <option value="pad">ðŸŒ«ï¸ Warm Pad</option>
+                <option value="epiano">ðŸŽ›ï¸ Electric Piano</option>
+                <option value="strings">ðŸŽ» Strings</option>
+                <option value="lead">âš¡ Synth Lead</option>
+                <option value="organ">ðŸª— Organ</option>
+                <option value="custom">ðŸŽšï¸ Custom Synth</option>
               </select>
-              <button class="toggle small" id="editSynth" title="Open Synth Designer">⚙</button>
+              <button class="toggle small" id="editSynth" title="Open Synth Designer">âš™</button>
             </div>
           </div>
           <div class="stack">
@@ -544,7 +546,7 @@
           <div class="stack">
             <div class="label">Octave <span id="octVal" class="val" style="color:var(--accent-2)">0</span></div>
             <div class="row">
-              <button class="toggle small" id="octDown">−</button>
+              <button class="toggle small" id="octDown">âˆ’</button>
               <button class="toggle small" id="octUp">+</button>
             </div>
           </div>
@@ -587,7 +589,7 @@
         <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:10px;">
           <div class="label" style="margin:0;">Arpeggiator</div>
           <div class="row" style="flex:0 0 auto;gap:6px;">
-            <button class="toggle small" id="arpEdit" title="Open Arp Designer">⚙</button>
+            <button class="toggle small" id="arpEdit" title="Open Arp Designer">âš™</button>
             <button class="toggle small" id="arpOn">Off</button>
           </div>
         </div>
@@ -604,7 +606,7 @@
       </div>
     </div>
 
-    <!-- ===== Column B — play ===== -->
+    <!-- ===== Column B â€” play ===== -->
     <div class="col">
       <!-- Chord pads -->
       <div class="panel">
@@ -623,7 +625,7 @@
           <div class="stack">
             <div class="label">Metronome / Tap</div>
             <div class="row">
-              <button class="toggle" id="metro">🔇 Off</button>
+              <button class="toggle" id="metro">ðŸ”‡ Off</button>
               <button class="toggle" id="tapTempo">Tap</button>
             </div>
           </div>
@@ -637,15 +639,15 @@
       </div>
     </div>
 
-    <!-- ===== Column C — arrange ===== -->
+    <!-- ===== Column C â€” arrange ===== -->
     <div class="col">
       <!-- Looper -->
       <div class="panel">
-        <div class="label">Looper <span id="loopInfo" style="color:var(--muted);text-transform:none;letter-spacing:0;">— empty</span></div>
+        <div class="label">Looper <span id="loopInfo" style="color:var(--muted);text-transform:none;letter-spacing:0;">â€” empty</span></div>
         <div class="playhead" id="playhead"><div class="playhead-fill" id="playheadFill"></div></div>
         <div class="row" style="margin-bottom:8px;">
           <button class="toggle" id="loopRec"><span class="rec-dot" style="display:inline-block;margin-right:6px;vertical-align:middle;"></span>Record</button>
-          <button class="toggle" id="loopPlay">▶ Play</button>
+          <button class="toggle" id="loopPlay">â–¶ Play</button>
           <button class="toggle" id="loopClear">Clear</button>
         </div>
         <div class="row">
@@ -661,7 +663,7 @@
           <div class="stack" style="flex:0 0 auto;">
             <div class="label">Options</div>
             <div class="row">
-              <button class="toggle small on" id="quantize">⌗ Quantize</button>
+              <button class="toggle small on" id="quantize">âŒ— Quantize</button>
               <button class="toggle small on" id="countin">Count-in</button>
             </div>
           </div>
@@ -673,25 +675,25 @@
         <div class="row" style="justify-content:space-between;align-items:center;margin-bottom:10px;">
           <div class="label" style="margin:0;">Chord Sequencer</div>
           <div class="row" style="flex:0 0 auto;">
-            <button class="toggle small" id="seqEdit">✎ Edit</button>
-            <button class="toggle small" id="seqPlay">▶ Play</button>
+            <button class="toggle small" id="seqEdit">âœŽ Edit</button>
+            <button class="toggle small" id="seqPlay">â–¶ Play</button>
           </div>
         </div>
         <div class="seq-tracks" id="seqTracks"></div>
         <div class="row seq-track-ctrl" style="margin:8px 0 10px;">
           <select id="trackInst" style="flex:1 1 auto;">
-            <option value="piano">🎹 Piano</option>
-            <option value="pad">🌫️ Warm Pad</option>
-            <option value="epiano">🎛️ Electric Piano</option>
-            <option value="strings">🎻 Strings</option>
-            <option value="lead">⚡ Synth Lead</option>
-            <option value="organ">🪗 Organ</option>
-            <option value="custom">🎚️ Custom Synth</option>
+            <option value="piano">ðŸŽ¹ Piano</option>
+            <option value="pad">ðŸŒ«ï¸ Warm Pad</option>
+            <option value="epiano">ðŸŽ›ï¸ Electric Piano</option>
+            <option value="strings">ðŸŽ» Strings</option>
+            <option value="lead">âš¡ Synth Lead</option>
+            <option value="organ">ðŸª— Organ</option>
+            <option value="custom">ðŸŽšï¸ Custom Synth</option>
           </select>
           <button class="toggle small" id="trackMute">Mute</button>
           <div class="row" style="flex:0 0 auto;align-items:center;gap:4px;">
             <span class="label" style="margin:0;">Oct</span>
-            <button class="toggle small" id="trackOctDown">−</button>
+            <button class="toggle small" id="trackOctDown">âˆ’</button>
             <span class="val" id="trackOct" style="min-width:22px;color:var(--accent-2)">0</span>
             <button class="toggle small" id="trackOctUp">+</button>
           </div>
@@ -709,7 +711,7 @@
           <div class="stack" style="flex:0 0 auto;">
             <div class="label">Cursor</div>
             <div class="row">
-              <button class="toggle small" id="seqRest">Rest →</button>
+              <button class="toggle small" id="seqRest">Rest â†’</button>
               <button class="toggle small" id="seqClear">Clear</button>
             </div>
           </div>
@@ -723,16 +725,16 @@
   <div class="modal hidden" id="synthModal">
     <div class="modal-card">
       <div class="modal-head">
-        <div class="label" style="margin:0;font-size:13px;">🎚️ Synth Designer</div>
+        <div class="label" style="margin:0;font-size:13px;">ðŸŽšï¸ Synth Designer</div>
         <div class="row" style="flex:0 0 auto;gap:6px;">
           <input id="presetName" placeholder="preset name" style="width:120px;" />
           <button class="toggle small" id="presetSave">Save</button>
-          <select id="presetList" style="flex:0 0 auto;min-width:90px;"><option value="">Load…</option></select>
-          <button class="toggle small" id="presetExport">⬇ JSON</button>
-          <button class="toggle small" id="presetImport">⬆ JSON</button>
+          <select id="presetList" style="flex:0 0 auto;min-width:90px;"><option value="">Loadâ€¦</option></select>
+          <button class="toggle small" id="presetExport">â¬‡ JSON</button>
+          <button class="toggle small" id="presetImport">â¬† JSON</button>
           <input type="file" id="presetFile" accept="application/json" style="display:none;" />
           <button class="toggle small" id="presetInit">Init</button>
-          <button class="chip" id="synthClose">✕</button>
+          <button class="chip" id="synthClose">âœ•</button>
         </div>
       </div>
       <div class="synth-grid" id="synthGrid"></div>
@@ -743,22 +745,22 @@
   <div class="modal hidden" id="arpModal">
     <div class="modal-card">
       <div class="modal-head">
-        <div class="label" style="margin:0;font-size:13px;">🎛️ Arpeggiator</div>
+        <div class="label" style="margin:0;font-size:13px;">ðŸŽ›ï¸ Arpeggiator</div>
         <div class="row" style="flex:0 0 auto;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
           <input id="arpPresetName" placeholder="preset name" style="width:108px;" />
           <button class="toggle small" id="arpPresetSave">Save</button>
-          <select id="arpPresetList" style="min-width:84px;"><option value="">Load…</option></select>
-          <button class="toggle small" id="arpPresetDelete" title="Delete selected">🗑</button>
-          <button class="toggle small" id="arpPresetExport" title="Export JSON">⬇</button>
-          <button class="toggle small" id="arpPresetImport" title="Import JSON">⬆</button>
+          <select id="arpPresetList" style="min-width:84px;"><option value="">Loadâ€¦</option></select>
+          <button class="toggle small" id="arpPresetDelete" title="Delete selected">ðŸ—‘</button>
+          <button class="toggle small" id="arpPresetExport" title="Export JSON">â¬‡</button>
+          <button class="toggle small" id="arpPresetImport" title="Import JSON">â¬†</button>
           <input type="file" id="arpPresetFile" accept="application/json" style="display:none;" />
           <button class="toggle small" id="arpModalOn">Off</button>
-          <button class="chip" id="arpClose">✕</button>
+          <button class="chip" id="arpClose">âœ•</button>
         </div>
       </div>
       <div class="synth-grid" id="arpGrid"></div>
       <div class="synth-sec" style="margin-top:10px;">
-        <div class="sec-title">Accent / Step pattern <span style="color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400;">— click to cycle: Normal · Accent · ghost · —silent—</span></div>
+        <div class="sec-title">Accent / Step pattern <span style="color:var(--muted);text-transform:none;letter-spacing:0;font-weight:400;">â€” click to cycle: Normal Â· Accent Â· ghost Â· â€”silentâ€”</span></div>
         <div class="accent-grid" id="accentGrid"></div>
       </div>
     </div>
@@ -766,7 +768,7 @@
 
 <script>
 /* ============================================================
-   PocketChord — single-file HiChord-style chord synth
+   PocketChord â€” single-file HiChord-style chord synth
    ============================================================ */
 
 const NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
@@ -799,7 +801,7 @@ for (const [name, def] of Object.entries(MODE_DEFS)) {
   const roman = qualities.map((q, i) => {
     let r = ROMAN_BASE[i];
     if (q === 'min' || q === 'dim') r = r.toLowerCase();
-    if (q === 'dim') r += '°'; else if (q === 'aug') r += '+';
+    if (q === 'dim') r += 'Â°'; else if (q === 'aug') r += '+';
     return r;
   });
   SCALES[name] = { intervals: def.intervals, qualities, roman, label: def.label };
@@ -860,7 +862,7 @@ function chordName(rootName, degreeIndex, type) {
     if (q === 'maj') return rootName + 'maj7';
     if (q === 'min') return rootName + 'min7';
     if (q === 'aug') return rootName + 'augMaj7';
-    return rootName + 'm7♭5';
+    return rootName + 'm7â™­5';
   }
   if (type === '9th') {
     if (dom) return rootName + '9';
@@ -880,7 +882,7 @@ const state = {
   octaveShift: 0,     // -2..+2
   inversion: 0,       // 0 root, 1 first, 2 second
   voicing: 'close',   // close|open|drop2|drop3|wide|piano|guitar|strings
-  instrument: 'epiano',   // instant synth default (piano streams samples — opt-in)
+  instrument: 'epiano',   // instant synth default (piano streams samples â€” opt-in)
   strum: false,
   strumDir: 'down',   // down|up|alt|random
   strumSpeed: 18,     // ms between notes
@@ -938,7 +940,7 @@ function applyVoicing(notes) {
       if (n.length >= 2) n[top - 1] -= 12; break;
     case 'drop3':                                 // 3rd voice from the top down an octave
       if (n.length >= 3) n[top - 2] -= 12; break;
-    case 'wide':                                  // bottom down, top up — very spread
+    case 'wide':                                  // bottom down, top up â€” very spread
       if (n.length >= 2) { n[0] -= 12; n[top] += 12; } break;
     case 'piano':                                 // bass root + close upper voices
       n.unshift(n[0] - 12); break;
@@ -991,7 +993,7 @@ function buildFX() {
 }
 
 /* ============================================================
-   Custom subtractive synth engine — your own engine.
+   Custom subtractive synth engine â€” your own engine.
    Per voice: Osc1 + Osc2 + Sub + Noise -> mix -> Filter -> Amp.
    Filter has its own envelope; an LFO can modulate pitch/filter/amp.
    Presets are plain JSON (portable). Implements the Tone instrument
@@ -1010,7 +1012,7 @@ function defaultSynthParams() {
   };
 }
 // One shared, live-editable preset; every custom-synth instance reads from it.
-// IMPORTANT: keep the SAME object reference (engines capture it) — mutate, never reassign.
+// IMPORTANT: keep the SAME object reference (engines capture it) â€” mutate, never reassign.
 const customParams = defaultSynthParams();
 const customEngines = new Set();
 function applyCustomParamsToAll() { customEngines.forEach(e => e.applyParams()); }
@@ -1151,7 +1153,7 @@ function makeSynth(kind, maxVoices = 8) {
       },
       release: 1.2,
       baseUrl: 'https://tonejs.github.io/audio/salamander/',
-      onload: () => showToast('🎹 Piano ready')
+      onload: () => showToast('ðŸŽ¹ Piano ready')
     });
   }
   if (kind === 'pad') {
@@ -1202,7 +1204,7 @@ function loadInstrument(kind) {
   synth = makeSynth(kind);
   synth.volume.value = 0;
   synth.connect(chorus);
-  if (kind === 'piano' && synth.loaded === false) showToast('🎹 Loading piano samples…', 0);
+  if (kind === 'piano' && synth.loaded === false) showToast('ðŸŽ¹ Loading piano samplesâ€¦', 0);
 }
 
 let _toastTimer = null;
@@ -1237,7 +1239,7 @@ function playChord(degreeIndex, velocity = 0.9) {
   heldChords.set(degreeIndex, notes);
 
   if (state.arp.on) {
-    // Arp mode: don't sustain — the arp loop reads heldChords and plays one note per tick.
+    // Arp mode: don't sustain â€” the arp loop reads heldChords and plays one note per tick.
     arpReset();
     syncTransport();
   } else if (state.strum) {
@@ -1274,7 +1276,7 @@ function releaseChord(degreeIndex, force) {
   setHeldVisual(degreeIndex, false);
   updateKeyboard();
   // Once nothing is held, flush any orphaned voice left by a rapid same-chord
-  // retrigger (PolySynth voice-steal — worst on sustaining sounds like Organ).
+  // retrigger (PolySynth voice-steal â€” worst on sustaining sounds like Organ).
   // Legit release tails are already releasing, so re-releasing them is a no-op.
   if (synth && synth.releaseAll && !state.arp.on && heldChords.size === 0) {
     try { synth.releaseAll(); } catch (_) {}
@@ -1315,11 +1317,11 @@ function releaseAllChords() {
   for (let d = 0; d < 7; d++) setHeldVisual(d, false);
   updateKeyboard();
 }
-// keydown/keyup state for the 1–7 keyboard shortcuts (declared here so panic can reset it).
+// keydown/keyup state for the 1â€“7 keyboard shortcuts (declared here so panic can reset it).
 const keyHeld = {};
 
 /* ============================================================
-   Arpeggiator — when on, a transport loop plays held-chord notes
+   Arpeggiator â€” when on, a transport loop plays held-chord notes
    one at a time, following the selected pattern + rate.
    ============================================================ */
 let arpLoop = null, arpStep = 0;
@@ -1518,7 +1520,7 @@ function buildArp() {
 }
 
 /* ============================================================
-   Multi-track step sequencer — each track has its own instrument,
+   Multi-track step sequencer â€” each track has its own instrument,
    octave, mute, and pattern; all share the transport + harmony.
    A step holds a scale degree (0-6) or null (rest).
    Playback follows the live key/scale/type, so it transposes.
@@ -1558,7 +1560,7 @@ function buildTrackSynth(tr) {
 }
 function buildAllTrackSynths() { seqState.tracks.forEach(buildTrackSynth); }
 
-// Called from playChord when Edit is on — writes the played degree to the active track.
+// Called from playChord when Edit is on â€” writes the played degree to the active track.
 function seqWrite(deg) {
   if (!seqState.edit) return;
   activeTrack().steps[seqState.cursor] = deg;
@@ -1608,7 +1610,7 @@ NOTES.forEach((n, i) => {
   keyScroller.appendChild(b);
 });
 
-// Scale selector — Major/Minor + modes. Chords, arp and sequencer all follow it.
+// Scale selector â€” Major/Minor + modes. Chords, arp and sequencer all follow it.
 const modeRow = document.getElementById('modeRow');
 const modeSel = document.createElement('select');
 Object.entries(MODE_DEFS).forEach(([val, def]) => {
@@ -1689,11 +1691,11 @@ function revoiceHeldChords() {
     heldChords.set(d, newNotes);   // arp mode: loop picks up the new notes automatically
   });
 }
-// Relabel + re-voice together — call after any voicing-affecting control change.
+// Relabel + re-voice together â€” call after any voicing-affecting control change.
 function refreshChords() { updateChordLabels(); revoiceHeldChords(); }
 
 // Map every active pointerId to the degree it pressed. Release is driven by a
-// WINDOW-level pointerup/pointercancel keyed by that id — which is far harder to
+// WINDOW-level pointerup/pointercancel keyed by that id â€” which is far harder to
 // lose than an element's own event, so rapid double-taps can't leave a stuck note.
 const activePtr = new Map(); // pointerId -> degreeIndex
 function attachChordHandlers(btn, degreeIndex) {
@@ -1784,12 +1786,12 @@ document.getElementById('instrument').onchange = (e) => {
     s = section('Oscillator 1');
     ctrlSelect(s, 'Wave', 'osc1.type', OSC_TYPES);
     ctrlRange(s, 'Octave', 'osc1.octave', -2, 2, 1);
-    ctrlRange(s, 'Detune', 'osc1.detune', -50, 50, 1, v => v + '¢');
+    ctrlRange(s, 'Detune', 'osc1.detune', -50, 50, 1, v => v + 'Â¢');
     ctrlRange(s, 'Level', 'osc1.level', 0, 1, 0.01, v => Math.round(v * 100) + '%');
     s = section('Oscillator 2');
     ctrlSelect(s, 'Wave', 'osc2.type', OSC_TYPES);
     ctrlRange(s, 'Octave', 'osc2.octave', -2, 2, 1);
-    ctrlRange(s, 'Detune', 'osc2.detune', -50, 50, 1, v => v + '¢');
+    ctrlRange(s, 'Detune', 'osc2.detune', -50, 50, 1, v => v + 'Â¢');
     ctrlRange(s, 'Level', 'osc2.level', 0, 1, 0.01, v => Math.round(v * 100) + '%');
     s = section('Sub / Noise');
     ctrlSelect(s, 'Sub wave', 'sub.type', SUB_TYPES);
@@ -1835,7 +1837,7 @@ document.getElementById('instrument').onchange = (e) => {
   const saveStore = (o) => localStorage.setItem(LS, JSON.stringify(o));
   function refreshPresetList() {
     const sel = document.getElementById('presetList'); const o = loadStore();
-    sel.innerHTML = '<option value="">Load…</option>' + Object.keys(o).map(n => `<option>${n}</option>`).join('');
+    sel.innerHTML = '<option value="">Loadâ€¦</option>' + Object.keys(o).map(n => `<option>${n}</option>`).join('');
   }
   document.getElementById('presetSave').onclick = () => {
     const name = (document.getElementById('presetName').value || 'My Preset').trim();
@@ -1929,7 +1931,7 @@ function setArpRate(val) {
   if (arpLoop) arpLoop.interval = val;
   [...arpRateRow.children].forEach(c => c.classList.toggle('on', c.dataset.val === val));
 }
-[['4n','¼'],['8n','⅛'],['16n','1/16'],['8t','⅛t']].forEach(([val, lbl]) => {
+[['4n','Â¼'],['8n','â…›'],['16n','1/16'],['8t','â…›t']].forEach(([val, lbl]) => {
   const b = document.createElement('button');
   b.className = 'toggle small' + (val === state.arp.rate ? ' on' : '');
   b.textContent = lbl; b.dataset.val = val;
@@ -1978,7 +1980,7 @@ function setArpRate(val) {
     row.append(l, b); sec.appendChild(row);
   }
   const ACC_CYCLE = ['normal','accent','ghost','silent'];
-  const ACC_SYM = { normal: '•', accent: '▲', ghost: '·', silent: '–' };
+  const ACC_SYM = { normal: 'â€¢', accent: 'â–²', ghost: 'Â·', silent: 'â€“' };
   function buildAccent() {
     accentGrid.innerHTML = '';
     accentGrid.style.gridTemplateColumns = `repeat(${Math.min(state.arp.accent.length, 16)}, 1fr)`;
@@ -2060,7 +2062,7 @@ function setArpRate(val) {
   const aSave = (o) => localStorage.setItem(ALS, JSON.stringify(o));
   function refreshArpPresets() {
     const sel = document.getElementById('arpPresetList'); const o = aLoad();
-    sel.innerHTML = '<option value="">Load…</option>' + Object.keys(o).map(n => `<option>${n}</option>`).join('');
+    sel.innerHTML = '<option value="">Loadâ€¦</option>' + Object.keys(o).map(n => `<option>${n}</option>`).join('');
   }
   document.getElementById('arpPresetSave').onclick = () => {
     const name = (document.getElementById('arpPresetName').value || 'My Arp').trim();
@@ -2094,7 +2096,7 @@ function setArpRate(val) {
   }
   function build() {
     grid.innerHTML = '';
-    let s = section('Style — one tap');
+    let s = section('Style â€” one tap');
     s.style.gridColumn = '1 / -1';
     const styleRow = document.createElement('div'); styleRow.className = 'row';
     Object.keys(STYLE_PRESETS).forEach(name => {
@@ -2108,7 +2110,7 @@ function setArpRate(val) {
     ctrlSelect(s, 'Pattern', 'pattern', ARP_PATTERNS.map(p => ({ v: p[0], l: p[1] })), v => setArpPattern(v));
     const phRow = document.createElement('div'); phRow.className = 'synth-ctrl';
     const phL = document.createElement('label'); phL.textContent = 'Phrase';
-    const phB = document.createElement('button'); phB.className = 'toggle small'; phB.style.flex = '1 1 auto'; phB.textContent = '🎲 New phrase';
+    const phB = document.createElement('button'); phB.className = 'toggle small'; phB.style.flex = '1 1 auto'; phB.textContent = 'ðŸŽ² New phrase';
     phB.onclick = () => { setArpPattern('phrase'); regeneratePhrase(); build(); };
     phRow.append(phL, phB); s.appendChild(phRow);
     ctrlSelect(s, 'Octaves', 'octave', [
@@ -2189,7 +2191,7 @@ function seqRenderLabels() {
   const steps = activeTrack().steps;
   [...seqGrid.children].forEach((c, i) => {
     const deg = steps[i];
-    const name = deg == null ? '·' : chordName(NOTES[(state.keyIndex + scale().intervals[deg]) % 12], deg, state.type);
+    const name = deg == null ? 'Â·' : chordName(NOTES[(state.keyIndex + scale().intervals[deg]) % 12], deg, state.type);
     c.innerHTML = '<span class="sidx">' + (i + 1) + '</span><span class="sname">' + name + '</span>';
     c.classList.toggle('filled', deg != null);
     c.classList.toggle('empty', deg == null);
@@ -2214,8 +2216,8 @@ function seqRenderTracks() {
     const el = document.createElement('div');
     el.className = 'strack' + (i === seqState.active ? ' active' : '') + (tr.muted ? ' muted' : '');
     el.style.setProperty('--tc', TRACK_COLORS[i % TRACK_COLORS.length]);
-    el.innerHTML = '<span class="tdot"></span>T' + (i + 1) + ' · ' + INST_LABEL[tr.instrument] +
-      (seqState.tracks.length > 1 ? ' <span class="trm" data-rm="' + i + '">✕</span>' : '');
+    el.innerHTML = '<span class="tdot"></span>T' + (i + 1) + ' Â· ' + INST_LABEL[tr.instrument] +
+      (seqState.tracks.length > 1 ? ' <span class="trm" data-rm="' + i + '">âœ•</span>' : '');
     el.onclick = (e) => {
       if (e.target.dataset && e.target.dataset.rm != null) { removeTrack(+e.target.dataset.rm); return; }
       selectTrack(i);
@@ -2282,7 +2284,7 @@ seqPlayBtn.onclick = async () => {
   await ensureAudio();
   seqState.playing = !seqState.playing;
   seqPlayBtn.classList.toggle('on', seqState.playing);
-  seqPlayBtn.textContent = seqState.playing ? '■ Stop' : '▶ Play';
+  seqPlayBtn.textContent = seqState.playing ? 'â–  Stop' : 'â–¶ Play';
   if (seqState.playing) seqState.pos = 0;
   else seqHighlightPlay(-1);
   syncTransport();
@@ -2322,8 +2324,8 @@ const seqLenRow = document.getElementById('seqLen');
 });
 
 const seqRateRow = document.getElementById('seqRate');
-// ½ = half note, ¼t/⅛t = triplets (divide the beat into 3 — the "1/3" feel).
-[['2n','½'],['4n','¼'],['4t','¼t'],['8n','⅛'],['8t','⅛t'],['16n','1/16']].forEach(([val, lbl]) => {
+// Â½ = half note, Â¼t/â…›t = triplets (divide the beat into 3 â€” the "1/3" feel).
+[['2n','Â½'],['4n','Â¼'],['4t','Â¼t'],['8n','â…›'],['8t','â…›t'],['16n','1/16']].forEach(([val, lbl]) => {
   const b = document.createElement('button');
   b.className = 'toggle small' + (val === seqState.rate ? ' on' : '');
   b.textContent = lbl;
@@ -2354,7 +2356,7 @@ async function ensureAudio() {
   buildAllTrackSynths();
   state.audioReady = true;
   const btn = document.getElementById('enableAudio');
-  btn.textContent = '🔊 Audio ready';
+  btn.textContent = 'ðŸ”Š Audio ready';
   btn.classList.add('active');
 }
 document.getElementById('enableAudio').onclick = ensureAudio;
@@ -2366,7 +2368,7 @@ document.getElementById('enableAudio').onclick = ensureAudio;
   let starting = false;
   async function start() {
     if (starting) return; starting = true;
-    loading.textContent = 'starting…';
+    loading.textContent = 'startingâ€¦';
     try { await ensureAudio(); } catch (_) {}
     ov.classList.add('gone');
   }
@@ -2398,7 +2400,7 @@ function setMidiStatus(connected, text, title) {
   s.classList.toggle('connected', connected);
   s.title = title || '';
   s.style.cursor = 'pointer';
-  // Only surface MIDI when a device is actually connected — no scary "blocked/error"
+  // Only surface MIDI when a device is actually connected â€” no scary "blocked/error"
   // messaging for the vast majority (mobile / no controller). Hot-plug auto-reveals it.
   s.style.display = connected ? '' : 'none';
   document.getElementById('midiText').textContent = text;
@@ -2407,11 +2409,11 @@ function setMidiStatus(connected, text, title) {
 let midiAccess = null;
 function initMIDI() {
   if (!navigator.requestMIDIAccess) {
-    // API absent entirely — wrong browser or a sandboxed/insecure context.
+    // API absent entirely â€” wrong browser or a sandboxed/insecure context.
     const why = !window.isSecureContext
       ? 'MIDI: needs https/localhost'
       : 'MIDI: use Chrome or Edge';
-    setMidiStatus(false, why, 'Web MIDI is only available in Chromium browsers (Chrome/Edge/Brave) over a secure context. Open this file in Chrome — not Safari, Firefox, or an embedded preview.');
+    setMidiStatus(false, why, 'Web MIDI is only available in Chromium browsers (Chrome/Edge/Brave) over a secure context. Open this file in Chrome â€” not Safari, Firefox, or an embedded preview.');
     return;
   }
   navigator.requestMIDIAccess({ sysex: false }).then(midi => {
@@ -2421,12 +2423,12 @@ function initMIDI() {
       midi.inputs.forEach(input => { input.onmidimessage = handleMIDI; names.push(input.name); });
       const n = names.length;
       setMidiStatus(n > 0,
-        n > 0 ? ('MIDI: ' + (n === 1 ? names[0] : n + ' devices') + ' ✓') : 'MIDI: no devices — tap to rescan',
+        n > 0 ? ('MIDI: ' + (n === 1 ? names[0] : n + ' devices') + ' âœ“') : 'MIDI: no devices â€” tap to rescan',
         n > 0 ? names.join(', ') : 'No MIDI inputs found. Plug in your controller and close any DAW / Arturia MCC / Analog Lab that may be holding the port, then tap to rescan.');
     };
     attach();
     midi.onstatechange = attach;
-  }).catch(() => setMidiStatus(false, 'MIDI: blocked — tap to retry', 'The browser blocked MIDI access (permission denied or blocked by an embedded frame). Open in Chrome/Edge directly and allow MIDI.'));
+  }).catch(() => setMidiStatus(false, 'MIDI: blocked â€” tap to retry', 'The browser blocked MIDI access (permission denied or blocked by an embedded frame). Open in Chrome/Edge directly and allow MIDI.'));
 }
 // Tap the status to (re)scan after plugging in or freeing the port.
 document.getElementById('midiStatus').addEventListener('click', initMIDI);
@@ -2466,11 +2468,11 @@ function setBpm(b) {
   refreshLoopLength();
 }
 
-/* ---------- Theme · Tap tempo · Latch · Sustain ---------- */
+/* ---------- Theme Â· Tap tempo Â· Latch Â· Sustain ---------- */
 const themeBtn = document.getElementById('themeBtn');
 function applyTheme(light) {
   document.body.classList.toggle('light', light);
-  themeBtn.textContent = light ? '☀️' : '🌙';
+  themeBtn.textContent = light ? 'â˜€ï¸' : 'ðŸŒ™';
   try { localStorage.setItem('pc_theme', light ? 'light' : 'dark'); } catch (_) {}
 }
 themeBtn.onclick = () => applyTheme(!document.body.classList.contains('light'));
@@ -2534,13 +2536,13 @@ metroBtn.onclick = async () => {
   await ensureAudio();
   loopState.metro = !loopState.metro;
   metroBtn.classList.toggle('on', loopState.metro);
-  metroBtn.textContent = loopState.metro ? '🔊 On' : '🔇 Off';
+  metroBtn.textContent = loopState.metro ? 'ðŸ”Š On' : 'ðŸ”‡ Off';
   if (loopState.metro && !transportRunning()) Tone.Transport.position = 0;
   syncTransport();
 };
 
 /* ============================================================
-   Looper — Tone.Transport + Tone.Part, bar-synced, overdub
+   Looper â€” Tone.Transport + Tone.Part, bar-synced, overdub
    ============================================================ */
 const loopState = {
   recording: false,
@@ -2628,7 +2630,7 @@ function countIn(done) {
     if (b >= total) {
       metroBtn.disabled = false;
       if (keyEl) keyEl.textContent = prevKey;
-      if (chordEl) chordEl.textContent = '● REC';
+      if (chordEl) chordEl.textContent = 'â— REC';
       document.getElementById('display').classList.remove('counting');
       done();
       return;
@@ -2661,17 +2663,17 @@ function beginRecord() {
   if (fresh) {
     Tone.Transport.position = 0;
     setPlaying(true);              // establish the loop / allow overdub playback
-    document.getElementById('loopPlay').textContent = '■ Stop';
+    document.getElementById('loopPlay').textContent = 'â–  Stop';
   }
   syncTransport();
   recUI(true);
-  updateLoopInfo('● recording…');
+  updateLoopInfo('â— recordingâ€¦');
 }
 function stopRecording() {
   loopState.recording = false;
   Object.keys(pending).forEach(d => recordChordEnd(parseInt(d, 10)));
   recUI(false);
-  updateLoopInfo(loopState.events.length + ' notes · ' + loopState.bars + ' bars');
+  updateLoopInfo(loopState.events.length + ' notes Â· ' + loopState.bars + ' bars');
 }
 recBtn.onclick = async () => {
   await ensureAudio();
@@ -2687,12 +2689,12 @@ playBtn.onclick = async () => {
   if (loopState.playing) {
     setPlaying(false);
     syncTransport();
-    playBtn.textContent = '▶ Play';
+    playBtn.textContent = 'â–¶ Play';
   } else if (loopState.events.length) {
     Tone.Transport.position = 0;
     setPlaying(true);
     syncTransport();
-    playBtn.textContent = '■ Stop';
+    playBtn.textContent = 'â–  Stop';
   }
 };
 
@@ -2704,22 +2706,22 @@ document.getElementById('loopClear').onclick = () => {
   loopState.events = [];
   for (const k in pending) delete pending[k];
   syncTransport();
-  playBtn.textContent = '▶ Play';
-  updateLoopInfo('— empty');
+  playBtn.textContent = 'â–¶ Play';
+  updateLoopInfo('â€” empty');
 };
 
 // ---- Length / options ----
 document.getElementById('loopBars').onchange = (e) => {
   loopState.bars = parseInt(e.target.value, 10);
   refreshLoopLength();
-  if (!loopState.events.length) updateLoopInfo('— empty');
+  if (!loopState.events.length) updateLoopInfo('â€” empty');
 };
 const quantBtn = document.getElementById('quantize');
 quantBtn.onclick = () => { loopState.quantize = !loopState.quantize; quantBtn.classList.toggle('on', loopState.quantize); };
 const countinBtn = document.getElementById('countin');
 countinBtn.onclick = () => { loopState.countin = !loopState.countin; countinBtn.classList.toggle('on', loopState.countin); };
 
-function updateLoopInfo(txt) { document.getElementById('loopInfo').textContent = '— ' + txt; }
+function updateLoopInfo(txt) { document.getElementById('loopInfo').textContent = 'â€” ' + txt; }
 
 // ---- Playhead animation ----
 (function animatePlayhead() {
@@ -2776,3 +2778,4 @@ document.getElementById('panic').onclick = () => {
 </script>
 </body>
 </html>
+
