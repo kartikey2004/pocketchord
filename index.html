@@ -177,19 +177,110 @@
   .board { display: grid; grid-template-columns: 0.92fr 1fr 1.05fr; gap: 10px; align-items: start; }
   .col { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
   @media (max-width: 940px) {
-    .wrap { padding: 0; }
+    .wrap { padding: 0; display: flex; flex-direction: column; height: 100%; }
     body { padding: 0; }
-    .topbar { flex-wrap: wrap; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--border); }
-    .board { display: flex; flex-direction: column; gap: 0; margin: 0; }
-    .board > .col:nth-child(1) { order: 3; flex: 0 0 auto; padding: 8px; background: var(--bg); border-top: 1px solid var(--border); }
-    .board > .col:nth-child(2) { order: 1; flex: 0 0 auto; padding: 12px; }
-    .board > .col:nth-child(3) { order: 2; flex: 1 1 auto; overflow-y: auto; padding: 12px; }
-    .kbd { height: 40px; margin: 0 12px 8px 12px; }
-    .chords { grid-template-columns: repeat(2, 1fr); gap: 8px; }
-    .chord-btn { aspect-ratio: 1; padding: 8px; min-height: auto; font-size: 14px; }
-    .chord-btn .name { font-size: 18px; }
-    .chord-btn .deg { font-size: 9px; }
-    .panel { margin: 8px 0; padding: 12px; border-radius: 14px; }
+
+    /* Top bar: minimal, fixed */
+    .topbar {
+      flex: 0 0 auto;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: calc(8px + env(safe-area-inset-top)) 12px 8px 12px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      z-index: 10;
+    }
+    .topbar h1 { font-size: 15px; }
+    .topbar .oled { flex: 1 1 auto; margin-bottom: 0; padding: 6px 10px; }
+    .topbar .oled .oled-main { font-size: 20px; }
+
+    /* Keyboard section */
+    .board > .col:nth-child(1) > .panel:first-child {
+      flex: 0 0 auto;
+      margin: 0;
+      padding: 0 12px;
+      border: none;
+      background: none;
+      box-shadow: none;
+    }
+    .kbd { height: 40px; margin: 8px 12px; border-radius: 8px; }
+
+    /* Hero area: Chord pads dominant */
+    .board {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      margin: 0;
+      flex: 1 1 auto;
+      overflow-y: auto;
+      padding-bottom: 60px; /* Space for fixed bottom nav */
+    }
+
+    /* Column 2 (chords) - HERO */
+    .board > .col:nth-child(2) {
+      order: 2;
+      flex: 1 1 auto;
+      padding: 0 12px 12px 12px;
+      overflow: visible;
+    }
+    .board > .col:nth-child(2) > .panel {
+      margin: 0;
+      padding: 0;
+      border: none;
+      background: none;
+      box-shadow: none;
+    }
+    .chords {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin: 12px 0;
+    }
+    .chord-btn {
+      aspect-ratio: 1;
+      padding: 8px;
+      min-height: auto;
+      font-size: 14px;
+    }
+    .chord-btn .name { font-size: 20px; }
+    .chord-btn .deg { font-size: 10px; }
+
+    /* Tempo display under chords */
+    .board > .col:nth-child(2) > .panel:nth-child(2) {
+      margin-top: 0;
+      padding: 10px;
+      min-height: auto;
+    }
+
+    /* Column 1 (sound shaping) - Hidden, shown in tabs */
+    .board > .col:nth-child(1) {
+      order: 4;
+      flex: 0 0 auto;
+      padding: 0 12px 12px 12px;
+      background: transparent;
+      border: none;
+      display: none;
+    }
+    .board > .col:nth-child(1).tab-active { display: flex; }
+
+    /* Column 3 (arrange) - Hidden, shown in tabs */
+    .board > .col:nth-child(3) {
+      order: 3;
+      flex: 0 0 auto;
+      padding: 0 12px 12px 12px;
+      overflow: visible;
+      background: transparent;
+      border: none;
+      display: none;
+    }
+    .board > .col:nth-child(3).tab-active { display: flex; }
+
+    /* Common panel styling for mobile */
+    .panel {
+      margin: 8px 0;
+      padding: 12px;
+      border-radius: 12px;
+    }
     .label { font-size: 10px; margin-bottom: 6px; }
     .toggle { padding: 8px 12px; font-size: 12px; min-height: 40px; }
     .toggle.small { padding: 6px 10px; font-size: 11px; min-height: 36px; }
@@ -197,6 +288,20 @@
     .row { gap: 6px; }
     .grid2 { gap: 8px; }
     .stack { gap: 2px; }
+
+    /* Bottom navigation (fixed) */
+    .board::after {
+      content: '';
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      z-index: 20;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
   }
   .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
   .label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 6px; }
@@ -2773,6 +2878,66 @@ document.getElementById('panic').onclick = () => {
   releaseAllChords();
   seqState.tracks.forEach(t => { try { t.synth && t.synth.releaseAll && t.synth.releaseAll(); } catch (_) {} });
 };
+
+/* Mobile tab switching for controls (column 1) and sequencer (column 3) */
+(function setupMobileTabs() {
+  if (window.innerWidth <= 940) {
+    const col1 = document.querySelector('.board > .col:nth-child(1)');
+    const col3 = document.querySelector('.board > .col:nth-child(3)');
+
+    // Create tab buttons container (inserted after topbar, before chords)
+    const tabContainer = document.createElement('div');
+    tabContainer.className = 'mobile-tabs';
+    tabContainer.style.cssText = `
+      flex: 0 0 auto; padding: 8px 12px 0; display: flex; gap: 4px;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+    `;
+
+    const btnEffects = document.createElement('button');
+    btnEffects.textContent = 'FX';
+    btnEffects.className = 'mobile-tab-btn active';
+    btnEffects.style.cssText = `
+      flex: 1; padding: 10px; background: var(--accent); color: #fff; border: none;
+      border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 12px;
+    `;
+
+    const btnSeq = document.createElement('button');
+    btnSeq.textContent = 'Seq';
+    btnSeq.className = 'mobile-tab-btn';
+    btnSeq.style.cssText = `
+      flex: 1; padding: 10px; background: var(--panel-2); color: var(--text); border: none;
+      border-radius: 8px; cursor: pointer; font-weight: 600; font-size: 12px;
+    `;
+
+    tabContainer.appendChild(btnEffects);
+    tabContainer.appendChild(btnSeq);
+
+    // Insert tabs into DOM after topbar
+    const topbar = document.querySelector('.topbar');
+    if (topbar && topbar.nextSibling) {
+      topbar.parentNode.insertBefore(tabContainer, topbar.nextSibling);
+    }
+
+    // Tab click handlers
+    btnEffects.onclick = () => {
+      col1.classList.add('tab-active');
+      col3.classList.remove('tab-active');
+      btnEffects.style.background = 'var(--accent)';
+      btnEffects.style.color = '#fff';
+      btnSeq.style.background = 'var(--panel-2)';
+      btnSeq.style.color = 'var(--text)';
+    };
+
+    btnSeq.onclick = () => {
+      col1.classList.remove('tab-active');
+      col3.classList.add('tab-active');
+      btnSeq.style.background = 'var(--accent)';
+      btnSeq.style.color = '#fff';
+      btnEffects.style.background = 'var(--panel-2)';
+      btnEffects.style.color = 'var(--text)';
+    };
+  }
+})();
 </script>
 </body>
 </html>
