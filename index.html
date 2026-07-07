@@ -460,7 +460,7 @@
   .key-body { display: none; padding: 0 14px 14px; }
   .key-card.open .key-body { display: block; }
 
-  .wrap > .kbd { flex: 0 0 auto; height: 64px; margin: 0 12px 10px; }
+  .wrap > .kbd { flex: 0 0 auto; height: 56px; margin: 0 12px 10px; }
 
   /* Scrollable pages */
   .tab-page { flex: 1 1 auto; overflow-y: auto; padding: 2px 12px 14px; display: flex; flex-direction: column; gap: 10px; }
@@ -513,6 +513,33 @@
     .seq-grid { grid-template-columns: repeat(16, 1fr); }
   }
 
+  /* Key joystick (HiChord-style): drag left/right = key, up/down = mode */
+  .key-joy-wrap { display: flex; flex-direction: column; }
+  .key-joy-wrap .scroller { display: none; } /* chips replaced by joystick; kept in DOM for the app logic */
+  .key-joy {
+    position: relative; flex: 1 1 auto; min-height: 140px; margin-top: 10px;
+    border-radius: 16px; border: 1px solid #23405d;
+    background: radial-gradient(circle at 50% 50%, #142a42 0%, #0d1a2b 75%);
+    display: flex; align-items: center; justify-content: center;
+    touch-action: none; user-select: none; -webkit-user-select: none;
+    cursor: grab;
+  }
+  .key-joy.dragging { cursor: grabbing; }
+  .joy-knob {
+    width: 68px; height: 68px; border-radius: 50%;
+    background: linear-gradient(160deg, var(--accent), #1d6fb0);
+    box-shadow: 0 0 22px var(--glow), inset 0 2px 6px rgba(255,255,255,0.25);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 17px; font-weight: 700;
+    transition: transform 0.18s ease; pointer-events: none;
+  }
+  .key-joy.dragging .joy-knob { transition: none; box-shadow: 0 0 30px var(--glow); }
+  .joy-hint { position: absolute; color: #56789a; font-size: 10px; font-weight: 700; letter-spacing: 1px; pointer-events: none; }
+  .jh-l { left: 12px; top: 50%; transform: translateY(-50%); font-size: 20px; }
+  .jh-r { right: 12px; top: 50%; transform: translateY(-50%); font-size: 20px; }
+  .jh-t { top: 8px; left: 50%; transform: translateX(-50%); }
+  .jh-b { bottom: 8px; left: 50%; transform: translateX(-50%); }
+
   /* Placeholder pages */
   .placeholder {
     flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -550,7 +577,7 @@
 
   <!-- Collapsible KEY card -->
   <div class="key-card" id="keyCard">
-    <div class="key-head" id="keyToggle">
+    <div class="key-head" style="cursor:default;">
       <div class="key-left">
         <div class="key-lbl">KEY</div>
         <div class="oled" id="display">
@@ -559,13 +586,6 @@
           <div class="oled-side oled-flags" id="dispFlags"></div>
         </div>
       </div>
-      <span class="key-chevron">▼</span>
-    </div>
-    <div class="key-body">
-      <div class="label">Key</div>
-      <div class="scroller" id="keyScroller"></div>
-      <div class="label" style="margin-top:10px;">Mode</div>
-      <div class="row" id="modeRow"></div>
     </div>
   </div>
 
@@ -597,21 +617,29 @@
             <button class="toggle" id="loopPlay">▶ Play</button>
             <button class="toggle" id="loopClear">Clear</button>
           </div>
-          <div class="stack">
-            <div class="label">Length</div>
-            <select id="loopBars">
+          <div class="row">
+            <select id="loopBars" style="flex:1 1 auto;min-width:0;">
               <option value="1">1 bar</option>
               <option value="2">2 bars</option>
               <option value="4" selected>4 bars</option>
               <option value="8">8 bars</option>
             </select>
+            <button class="toggle small on" id="quantize">⌗ Quantize</button>
+            <button class="toggle small on" id="countin">Count-in</button>
           </div>
-          <div class="stack" style="margin-top:8px;">
-            <div class="label">Options</div>
-            <div class="row">
-              <button class="toggle small on" id="quantize">⌗ Quantize</button>
-              <button class="toggle small on" id="countin">Count-in</button>
-            </div>
+        </div>
+
+        <!-- Key / Scale joystick (HiChord-style) -->
+        <div class="panel key-joy-wrap">
+          <div class="label">Key / Scale</div>
+          <div class="scroller" id="keyScroller"></div>
+          <div class="row" id="modeRow" style="margin-top:6px;"></div>
+          <div class="key-joy" id="keyJoy">
+            <span class="joy-hint jh-l">‹</span>
+            <span class="joy-hint jh-r">›</span>
+            <span class="joy-hint jh-t">MODE</span>
+            <span class="joy-hint jh-b">MODE</span>
+            <div class="joy-knob" id="keyJoyKnob">C</div>
           </div>
         </div>
       </div>
@@ -2854,11 +2882,68 @@ document.querySelectorAll('.nav-tab').forEach(tab => {
   });
 });
 
-/* ---------- Collapsible KEY card ---------- */
+/* ---------- HiChord-style key joystick: drag left/right = key, up/down = mode ---------- */
 (function () {
-  const card = document.getElementById('keyCard');
-  const head = document.getElementById('keyToggle');
-  if (card && head) head.addEventListener('click', () => card.classList.toggle('open'));
+  const zone = document.getElementById('keyJoy');
+  const knob = document.getElementById('keyJoyKnob');
+  if (!zone || !knob) return;
+
+  const keyChips = () => Array.from(document.querySelectorAll('#keyScroller .chip'));
+  const modeSel = () => document.querySelector('#modeRow select');
+
+  function syncKnob() {
+    const act = keyChips().find(c => c.classList.contains('active'));
+    if (act) knob.textContent = act.textContent;
+  }
+  function stepKey(dir) {
+    const list = keyChips();
+    if (!list.length) return;
+    let i = list.findIndex(c => c.classList.contains('active'));
+    if (i < 0) i = 0;
+    list[(i + dir + list.length) % list.length].click();
+    syncKnob();
+  }
+  function stepMode(dir) {
+    const sel = modeSel();
+    if (!sel || !sel.options.length) return;
+    sel.selectedIndex = (sel.selectedIndex + dir + sel.options.length) % sel.options.length;
+    sel.dispatchEvent(new Event('change'));
+  }
+
+  const KEY_STEP = 36, MODE_STEP = 48; // px of drag per step
+  let pid = null, ox = 0, oy = 0, takenX = 0, takenY = 0;
+
+  zone.addEventListener('pointerdown', (e) => {
+    pid = e.pointerId; ox = e.clientX; oy = e.clientY; takenX = 0; takenY = 0;
+    zone.setPointerCapture(pid);
+    zone.classList.add('dragging');
+    e.preventDefault();
+  });
+  zone.addEventListener('pointermove', (e) => {
+    if (e.pointerId !== pid) return;
+    const dx = e.clientX - ox, dy = e.clientY - oy;
+    const maxX = zone.clientWidth / 2 - 40, maxY = zone.clientHeight / 2 - 40;
+    knob.style.transform = 'translate(' + Math.max(-maxX, Math.min(maxX, dx)) + 'px,' + Math.max(-maxY, Math.min(maxY, dy)) + 'px)';
+    const tx = Math.trunc(dx / KEY_STEP);
+    while (takenX < tx) { stepKey(1); takenX++; }
+    while (takenX > tx) { stepKey(-1); takenX--; }
+    const ty = Math.trunc(-dy / MODE_STEP); // drag up = next mode
+    while (takenY < ty) { stepMode(1); takenY++; }
+    while (takenY > ty) { stepMode(-1); takenY--; }
+  });
+  function joyEnd(e) {
+    if (e.pointerId !== pid) return;
+    pid = null;
+    zone.classList.remove('dragging');
+    knob.style.transform = '';
+  }
+  zone.addEventListener('pointerup', joyEnd);
+  zone.addEventListener('pointercancel', joyEnd);
+
+  // keep knob label in sync when a key chip is tapped directly
+  const ks = document.getElementById('keyScroller');
+  if (ks) ks.addEventListener('click', () => setTimeout(syncKnob, 0));
+  syncKnob();
 })();
 </script>
 </body>
