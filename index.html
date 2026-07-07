@@ -427,7 +427,7 @@
 
   /* ---------- v16: phone-app layout (matches design mockup) ---------- */
   body { padding: 0; }
-  .wrap { max-width: 640px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; height: 100dvh; padding: 0; }
+  .wrap { max-width: none; width: 100%; margin: 0 auto; display: flex; flex-direction: column; height: 100dvh; padding: 0; }
 
   .topbar {
     flex: 0 0 auto; display: flex; align-items: center; gap: 6px; flex-wrap: nowrap;
@@ -507,6 +507,11 @@
   .nav-tab .nav-ico { font-size: 19px; line-height: 1; }
   .nav-tab .nav-label { font-size: 10px; font-weight: 700; letter-spacing: 0.2px; }
   .nav-tab.active { color: var(--accent); background: var(--panel-2); }
+
+  /* Wide screens: sequencer steps in one row of 16 */
+  @media (min-width: 800px) {
+    .seq-grid { grid-template-columns: repeat(16, 1fr); }
+  }
 
   /* Placeholder pages */
   .placeholder {
