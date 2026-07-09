@@ -1063,7 +1063,9 @@ function buildFX() {
   const limiter = new Tone.Limiter(-1).toDestination();
   masterVol = new Tone.Volume(parseFloat(document.getElementById('volume').value)).connect(limiter);
   reverb = new Tone.Reverb({ decay: 1.5, wet: 0 }).connect(masterVol);
-  delay  = new Tone.FeedbackDelay({ delayTime: '8n', feedback: 0.1, wet: 0 }).connect(reverb);
+  // Dry path skips the reverb convolver until reverb is enabled — a ConvolverNode
+  // processes constantly even at wet:0, a major CPU/crackle source on phones.
+  delay  = new Tone.FeedbackDelay({ delayTime: '8n', feedback: 0.1, wet: 0 }).connect(masterVol);
   chorus = new Tone.Chorus({ frequency: 1.5, delayTime: 3.5, depth: 0.7, wet: 0 }).connect(delay).start();
 
   // Metronome: short click, accented downbeat. Dry (bypasses fx), straight to master.
@@ -1976,7 +1978,17 @@ function fxToggle(id, key, node) {
   el.onclick = () => {
     state.fx[key] = !state.fx[key];
     el.classList.toggle('on', state.fx[key]);
-    if (node()) node().wet.rampTo(state.fx[key] ? (key === 'reverb' ? 0.5 : key === 'delay' ? 0.35 : 0.6) : 0, 0.1);
+    const n = node();
+    if (!n) return;
+    if (key === 'reverb') {
+      // True bypass: only route through the convolver while reverb is on,
+      // so it can go fully idle when off (saves CPU on phones).
+      try { delay.disconnect(); } catch (_) {}
+      delay.connect(state.fx.reverb ? reverb : masterVol);
+      n.wet.value = state.fx.reverb ? 0.5 : 0;
+    } else {
+      n.wet.rampTo(state.fx[key] ? (key === 'delay' ? 0.35 : 0.6) : 0, 0.1);
+    }
   };
 }
 fxToggle('fxReverb', 'reverb', () => reverb);
@@ -2446,6 +2458,12 @@ function changeOctave(delta) {
    ============================================================ */
 async function ensureAudio() {
   if (state.audioReady) return;
+  // Default 'interactive' latency uses the smallest audio buffer and underruns
+  // (crackles) on phones. 'balanced' trades ~20-40ms latency for clean output.
+  // Must happen before any Tone nodes are created (they bind to the context).
+  if (!fxBuilt) {
+    try { Tone.setContext(new Tone.Context({ latencyHint: 'balanced' })); } catch (_) {}
+  }
   await Tone.start();
   loadInstrument(state.instrument);
   buildAllTrackSynths();
