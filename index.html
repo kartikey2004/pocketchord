@@ -535,10 +535,13 @@
   }
   .key-joy.dragging .joy-knob { transition: none; box-shadow: 0 0 30px var(--glow); }
   .joy-hint { position: absolute; color: #56789a; font-size: 10px; font-weight: 700; letter-spacing: 1px; pointer-events: none; }
-  .jh-l { left: 12px; top: 50%; transform: translateY(-50%); font-size: 20px; }
-  .jh-r { right: 12px; top: 50%; transform: translateY(-50%); font-size: 20px; }
-  .jh-t { top: 8px; left: 50%; transform: translateX(-50%); }
-  .jh-b { bottom: 8px; left: 50%; transform: translateX(-50%); }
+  .jh-t { top: 6px; left: 50%; transform: translateX(-50%); }
+  .joy-zones { position: absolute; inset: 0; display: flex; pointer-events: none; border-radius: inherit; overflow: hidden; }
+  .joy-zone { flex: 1 1 0; min-width: 0; border-right: 1px solid rgba(86,120,154,0.25); display: flex; align-items: flex-end; justify-content: center; padding-bottom: 5px; transition: background 0.08s ease; }
+  .joy-zone:last-child { border-right: none; }
+  .joy-zone span { font-size: 11px; font-weight: 700; color: #56789a; }
+  .joy-zone.active { background: rgba(59,130,246,0.18); }
+  .joy-zone.active span { color: #6ee7ff; }
 
   /* Placeholder pages */
   .placeholder {
@@ -635,10 +638,8 @@
           <div class="scroller" id="keyScroller"></div>
           <div class="row" id="modeRow" style="margin-top:6px;"></div>
           <div class="key-joy" id="keyJoy">
-            <span class="joy-hint jh-l">‹</span>
-            <span class="joy-hint jh-r">›</span>
-            <span class="joy-hint jh-t">MODE</span>
-            <span class="joy-hint jh-b">MODE</span>
+            <div class="joy-zones" id="joyZones"></div>
+            <span class="joy-hint jh-t">MODE ↕</span>
             <div class="joy-knob" id="keyJoyKnob">C</div>
           </div>
         </div>
@@ -2882,26 +2883,41 @@ document.querySelectorAll('.nav-tab').forEach(tab => {
   });
 });
 
-/* ---------- HiChord-style key joystick: drag left/right = key, up/down = mode ---------- */
+/* ---------- HiChord-style key joystick ----------
+   The pad is split into 7 vertical zones (G A B C D E F, C in the middle).
+   Dragging into a zone switches to that key instantly; releasing springs
+   the knob back to center and returns to the base key (the key you were
+   in when the drag started — normally C). Vertical drag steps the mode. */
 (function () {
   const zone = document.getElementById('keyJoy');
   const knob = document.getElementById('keyJoyKnob');
-  if (!zone || !knob) return;
+  const zonesBox = document.getElementById('joyZones');
+  if (!zone || !knob || !zonesBox) return;
 
+  const ZONE_KEYS = ['G', 'A', 'B', 'C', 'D', 'E', 'F'];
   const keyChips = () => Array.from(document.querySelectorAll('#keyScroller .chip'));
+  const chipFor = (name) => keyChips().find(c => c.textContent === name);
+  const activeKey = () => {
+    const a = keyChips().find(c => c.classList.contains('active'));
+    return a ? a.textContent : 'C';
+  };
   const modeSel = () => document.querySelector('#modeRow select');
 
-  function syncKnob() {
-    const act = keyChips().find(c => c.classList.contains('active'));
-    if (act) knob.textContent = act.textContent;
-  }
-  function stepKey(dir) {
-    const list = keyChips();
-    if (!list.length) return;
-    let i = list.findIndex(c => c.classList.contains('active'));
-    if (i < 0) i = 0;
-    list[(i + dir + list.length) % list.length].click();
-    syncKnob();
+  const zoneEls = ZONE_KEYS.map((k) => {
+    const d = document.createElement('div');
+    d.className = 'joy-zone';
+    const s = document.createElement('span');
+    s.textContent = k;
+    d.appendChild(s);
+    zonesBox.appendChild(d);
+    return d;
+  });
+
+  function selectKey(name) {
+    const chip = chipFor(name);
+    if (chip && !chip.classList.contains('active')) chip.click();
+    knob.textContent = activeKey();
+    zoneEls.forEach((el, i) => el.classList.toggle('active', ZONE_KEYS[i] === activeKey()));
   }
   function stepMode(dir) {
     const sel = modeSel();
@@ -2910,24 +2926,37 @@ document.querySelectorAll('.nav-tab').forEach(tab => {
     sel.dispatchEvent(new Event('change'));
   }
 
-  const KEY_STEP = 36, MODE_STEP = 48; // px of drag per step
-  let pid = null, ox = 0, oy = 0, takenX = 0, takenY = 0;
+  function zoneAt(clientX) {
+    const r = zone.getBoundingClientRect();
+    const i = Math.max(0, Math.min(ZONE_KEYS.length - 1,
+      Math.floor((clientX - r.left) / (r.width / ZONE_KEYS.length))));
+    return ZONE_KEYS[i];
+  }
+  function moveKnob(e) {
+    const r = zone.getBoundingClientRect();
+    const maxX = r.width / 2 - 40, maxY = r.height / 2 - 40;
+    const dx = Math.max(-maxX, Math.min(maxX, e.clientX - (r.left + r.width / 2)));
+    const dy = Math.max(-maxY, Math.min(maxY, e.clientY - (r.top + r.height / 2)));
+    knob.style.transform = 'translate(' + dx + 'px,' + dy + 'px)';
+  }
+
+  const MODE_STEP = 60; // px of vertical drag per mode step
+  let pid = null, oy = 0, takenY = 0, baseKey = 'C';
 
   zone.addEventListener('pointerdown', (e) => {
-    pid = e.pointerId; ox = e.clientX; oy = e.clientY; takenX = 0; takenY = 0;
-    zone.setPointerCapture(pid);
+    pid = e.pointerId; oy = e.clientY; takenY = 0;
+    baseKey = activeKey();
+    try { zone.setPointerCapture(pid); } catch (_) {}
     zone.classList.add('dragging');
+    moveKnob(e);
+    selectKey(zoneAt(e.clientX));
     e.preventDefault();
   });
   zone.addEventListener('pointermove', (e) => {
     if (e.pointerId !== pid) return;
-    const dx = e.clientX - ox, dy = e.clientY - oy;
-    const maxX = zone.clientWidth / 2 - 40, maxY = zone.clientHeight / 2 - 40;
-    knob.style.transform = 'translate(' + Math.max(-maxX, Math.min(maxX, dx)) + 'px,' + Math.max(-maxY, Math.min(maxY, dy)) + 'px)';
-    const tx = Math.trunc(dx / KEY_STEP);
-    while (takenX < tx) { stepKey(1); takenX++; }
-    while (takenX > tx) { stepKey(-1); takenX--; }
-    const ty = Math.trunc(-dy / MODE_STEP); // drag up = next mode
+    moveKnob(e);
+    selectKey(zoneAt(e.clientX));
+    const ty = Math.trunc((oy - e.clientY) / MODE_STEP); // drag up = next mode
     while (takenY < ty) { stepMode(1); takenY++; }
     while (takenY > ty) { stepMode(-1); takenY--; }
   });
@@ -2936,14 +2965,14 @@ document.querySelectorAll('.nav-tab').forEach(tab => {
     pid = null;
     zone.classList.remove('dragging');
     knob.style.transform = '';
+    selectKey(baseKey); // spring back to base key
   }
   zone.addEventListener('pointerup', joyEnd);
   zone.addEventListener('pointercancel', joyEnd);
 
-  // keep knob label in sync when a key chip is tapped directly
   const ks = document.getElementById('keyScroller');
-  if (ks) ks.addEventListener('click', () => setTimeout(syncKnob, 0));
-  syncKnob();
+  if (ks) ks.addEventListener('click', () => setTimeout(() => selectKey(activeKey()), 0));
+  selectKey(activeKey());
 })();
 </script>
 </body>
